@@ -7,8 +7,9 @@ def load_data():
     with open('data.csv', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in reader:
-            variable, value = row
-            data[variable] = float(value)
+            if len(row) == 2:
+                variable, value = row
+                data[variable] = float(value)
     return data
 
 
