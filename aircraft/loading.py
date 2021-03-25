@@ -52,8 +52,8 @@ class Loading:
         # x_seats_f = 0.1  # TODO: get real data
         # x_seats_aft = 0.6  # TODO: get real data
 
-        x_cg_f = np.linspace(x_seats_f, x_seats_aft, 20)
-        x_cg_aft = np.linspace(x_seats_aft, x_seats_f, 20)
+        x_cg_f = np.linspace(x_seats_f, x_seats_aft, n_seats)
+        x_cg_aft = np.linspace(x_seats_aft, x_seats_f, n_seats)
 
         mass_average_pax = 70 * 2  # Times two because passengers are loaded 2 by 2 TODO: get real data
         xcg_old = self.xcg[-1]
@@ -86,14 +86,14 @@ class Loading:
         return [xcg_old, xcg_end], [mass_old, mass_end]
 
     def plot(self):
-        """Plot the loaging diagram"""
+        """Plot the loading diagram"""
 
         # Define styles
-        cargo = {'c': 'blue', 'marker': 'o'}
-        window = {'c': 'green', 'marker': '+'}
-        aisle = {'c': 'pink', 'marker': '+'}
-        middle = {'c': 'gray', 'marker': '+'}
-        fuel = {'c': 'orange', 'marker': 's'}
+        cargo = {'c': '#003f5c', 'marker': 'o'}
+        window = {'c': '#58508d', 'marker': '+'}
+        aisle = {'c': '#bc5090', 'marker': '+'}
+        middle = {'c': '#ff6361', 'marker': '+'}
+        fuel = {'c': '#ffa600', 'marker': 's'}
 
         # Create plot
         fig, ax = plt.subplots()
@@ -125,7 +125,7 @@ class Loading:
 
         # Find and plot maximum xcg shift
         max_xcg, min_xcg = max(self.xcg), min(self.xcg)
-        max_mass, min_mass= max(self.mass), min(self.mass)
+        max_mass, min_mass = max(self.mass), min(self.mass)
 
         ax.plot([max_xcg, max_xcg], [min_mass, max_mass], '--k', alpha=0.55)
         ax.plot([min_xcg, min_xcg], [min_mass, max_mass], '--k', alpha=0.55)
@@ -146,6 +146,7 @@ class Loading:
         plt.legend([l1, l2, l3, l4, l5], ['Cargo', 'Window seats', 'Aisle seats', 'Middle seats', 'Fuel'])
         plt.grid()
         plt.show()
+
 
 def main():
     loading = Loading()
