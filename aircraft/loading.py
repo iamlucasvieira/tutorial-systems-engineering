@@ -91,32 +91,54 @@ class Loading:
         # Define styles
         cargo = {'c': 'blue', 'marker': 'o'}
         window = {'c': 'green', 'marker': '+'}
-        aisle = {'c': 'k', 'marker': '+'}
+        aisle = {'c': 'pink', 'marker': '+'}
         middle = {'c': 'gray', 'marker': '+'}
         fuel = {'c': 'orange', 'marker': 's'}
 
+        # Create plot
         fig, ax = plt.subplots()
         ax.plot(self.xcg, self.mass)
 
+        # Get cargo xcg shift
         xcg_cargo_f, mass_cargo_f, xcg_cargo_aft, mass_cargo_aft = self.load_cargo()
         l1, = ax.plot(xcg_cargo_f, mass_cargo_f, **cargo)
         ax.plot(xcg_cargo_aft, mass_cargo_aft, **cargo)
 
+        # Get window seats xcg shift
         xcg_window_f, mass_windows_f, xcg_window_aft, mass_windows_aft = self.load_seats(0.1, 0.6)
         l2, = ax.plot(xcg_window_f, mass_windows_f, **window)
         ax.plot(xcg_window_aft, mass_windows_aft, **window)
 
-        xcg_window_f, mass_windows_f, xcg_window_aft, mass_windows_aft = self.load_seats(0.1, 0.6)
-        l3, = ax.plot(xcg_window_f, mass_windows_f, **aisle)
-        ax.plot(xcg_window_aft, mass_windows_aft, **aisle)
+        # Get aisle seats xcg shift
+        xcg_aisle_f, mass_aisle_f, xcg_aisle_aft, mass_aisle_aft = self.load_seats(0.1, 0.6)
+        l3, = ax.plot(xcg_aisle_f, mass_aisle_f, **aisle)
+        ax.plot(xcg_aisle_aft, mass_aisle_aft, **aisle)
 
-        xcg_window_f, mass_windows_f, xcg_window_aft, mass_windows_aft = self.load_seats(0.1, 0.6)
-        l4, = ax.plot(xcg_window_f, mass_windows_f, **middle)
-        ax.plot(xcg_window_aft, mass_windows_aft, **middle)
+        # Get middle seats xcg shift
+        xcg_middle_f, mass_middle_f, xcg_middle_aft, mass_middle_aft = self.load_seats(0.1, 0.6)
+        l4, = ax.plot(xcg_middle_f, mass_middle_f, **middle)
+        ax.plot(xcg_middle_aft, mass_middle_aft, **middle)
 
+        # Get fuel xcg shift
         xcg_fuel, mass_fuel = self.load_fuel()
         l5, = ax.plot(xcg_fuel, mass_fuel, **fuel)
 
+        # Find and plot maximum xcg shift
+        max_xcg, min_xcg = max(self.xcg), min(self.xcg)
+        max_mass, min_mass= max(self.mass), min(self.mass)
+
+        ax.plot([max_xcg, max_xcg], [min_mass, max_mass], '--k', alpha=0.55)
+        ax.plot([min_xcg, min_xcg], [min_mass, max_mass], '--k', alpha=0.55)
+
+        # Print results
+        print('-' * 45)
+        print(f"{'Results':^45}")
+        print('-' * 45)
+        print(f"{'Maximum Xcg_mac [-]':<25} {max_xcg:<20}")
+        print(f"{'Minimum Xcg_mac [-]':<25} {min_xcg:<20}")
+        print(f"{'Final mass [kg]':<25} {max_mass:<20} ")
+
+        # Add plot labels, title, legend
         fig.suptitle("Loading diagram", fontsize=16)
         ax.set_xlabel(r'$X_{cg_{MAC}}$ [-]')
         ax.set_ylabel(f'Mass [kg]')
@@ -124,7 +146,6 @@ class Loading:
         plt.legend([l1, l2, l3, l4, l5], ['Cargo', 'Window seats', 'Aisle seats', 'Middle seats', 'Fuel'])
         plt.grid()
         plt.show()
-
 
 def main():
     loading = Loading()
