@@ -132,12 +132,13 @@ class Loading:
         ax.plot([min_xcg, min_xcg], [min_mass, max_mass], '--k', alpha=0.55)
 
         # Print results
-        print('-' * 45)
-        print(f"{'Results':^45}")
-        print('-' * 45)
-        print(f"{'Maximum Xcg_mac [-]':<25} {max_xcg:<20}")
-        print(f"{'Minimum Xcg_mac [-]':<25} {min_xcg:<20}")
-        print(f"{'Final mass [kg]':<25} {max_mass:<20} ")
+        print('-' * 40)
+        print(f"{'Results':^40}")
+        print('-' * 40)
+        print(f"{'Maximum Xcg_mac':<25} {max_xcg:<8} {'[-]':<7}")
+        print(f"{'Minimum Xcg_mac':<25} {min_xcg:<8} {'[-]':<7}")
+        print(f"{'MZFW':<25} {mass_middle_f[-1]:<8} {'[kg]':<7}")
+        print(f"{'MTOW':<25} {max_mass:<8} {'[kg]':<7}")
 
         # Add plot labels, title, legend
         fig.suptitle("Loading diagram", fontsize=16)
