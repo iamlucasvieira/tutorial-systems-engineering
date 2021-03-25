@@ -124,7 +124,8 @@ class Loading:
         l5, = ax.plot(xcg_fuel, mass_fuel, **fuel)
 
         # Find and plot maximum xcg shift
-        max_xcg, min_xcg = max(self.xcg), min(self.xcg)
+        margin = 0.02
+        max_xcg, min_xcg = max(self.xcg) * (1 + margin), min(self.xcg) * (1 - margin)
         max_mass, min_mass = max(self.mass), min(self.mass)
 
         ax.plot([max_xcg, max_xcg], [min_mass, max_mass], '--k', alpha=0.55)
