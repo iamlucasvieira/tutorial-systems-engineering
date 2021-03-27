@@ -1,7 +1,4 @@
-XcgOEW, 0.7925
-xy, 2
-a, 2
-b, 2
+XcgOEW, 0.25
 fuel_max, 7848
 dist_seats, 0.7874
 ramp_mass, 42410
@@ -10,3 +7,5 @@ OEW,24086
 pax_cab_w, 7450
 front_cargo_w, 1520
 aft_cargo_w, 1506
+mac, 3.17
+XLEMAC, 10

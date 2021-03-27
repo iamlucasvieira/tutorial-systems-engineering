@@ -9,18 +9,21 @@ class Loading:
 
     def __init__(self):
         self.data = load_data()
-        self.xcg = [self.data['XcgOEW']]  #assumed to be 0.25c we can update this later in more detail if we find another way
+        self.xcg = [
+            self.data['XcgOEW']]  # assumed to be 0.25c we can update this later in more detail if we find another way
         self.mass = [0]
 
     def get_paxcabw(self):
-        #this should give the mass of a passengr with the cabin luggage
-        #check why it is that low
-        pcluggage_m= self.data['ramp_mass'] - self.data['fuel_max'] - \
-                     self.data['front_cargo_w'] - self.data['aft_cargo_w'] \
-                     - self.data['OEW']
-        return pcluggage_m
-################# Weights of each part and cg locations################
+        """Return """
+        ramp_mass = self.data['ramp_mass']
+        fuel_mass = self.data['fuel_max']
+        front_cargo_w = self.data['front_cargo_w']
+        aft_cargo_w = self.data['aft_cargo_w']
+        OEW = self.data['OEW']
 
+        pcluggage_m = ramp_mass - fuel_mass - front_cargo_w - aft_cargo_w - OEW
+
+        return pcluggage_m / 100
 
     def get_new_xcg(self, xcg_old, mass_old, xcg_item, mass_item):
         xcg_old = xcg_old
@@ -41,8 +44,8 @@ class Loading:
         xcg_cargo_f = 0.2  # TODO: get real data
         mass_cargo_f = self.data['front_cargo_w']  # TODO: get real data (done)
 
-        xcg_cargo_aft = 0.6  # TODO: get real data
-        mass_cargo_aft =self.data['aft_cargo_w']  # TODO: get real data (done)
+        xcg_cargo_aft = 0.4  # TODO: get real data
+        mass_cargo_aft = self.data['aft_cargo_w']  # TODO: get real data (done)
 
         xcg_f, mass_f = self.get_new_xcg(xcg_old, mass_old, xcg_cargo_f, mass_cargo_f)
         xcg_aft, mass_aft = self.get_new_xcg(xcg_old, mass_old, xcg_cargo_aft, mass_cargo_aft)
@@ -56,15 +59,21 @@ class Loading:
 
         return xcg_list_f, mass_list_f, xcg_list_aft, mass_list_aft
 
-    def load_seats(self, x_seats_f, x_seats_aft):
-        n_seats = 17  # Number os seats in a single column  TODO: get real data (102 seats right now, subtract the other two)
+    def load_seats(self, x_seats_f, x_seats_aft, gap=0):
 
-        x_seats_f = 2.4/11.3*26.50  #the ratio is derived using a ruler TODO: get real data (done in meters)
-        x_seats_aft =  x_seats_f+ self.data['dist_seats']*n_seats  # TODO: get real data (done)
+        XLEMAC = self.data['XLEMAC']
 
-        x_cg_f = np.linspace(x_seats_f, x_seats_aft, n_seats)
-        x_cg_aft = np.linspace(x_seats_aft, x_seats_f, n_seats)
-        mass_average_pax = self.get_paxcabw() * 2  # Times two because passengers are loaded 2 by 2 TODO: get real data (done but check)
+        n_seats = 17  # Number os seats in a single column
+        mac = self.data['mac']
+        dist_seats = self.data['dist_seats']
+
+        x_seats_f = (2.4 / 11.3 * 26.50)  # TODO: get real data (done in meters)
+        x_seats_aft = x_seats_f + dist_seats * n_seats
+
+        x_cg_f = (np.linspace(x_seats_f, x_seats_aft, n_seats) - XLEMAC) / mac
+        x_cg_aft = (np.linspace(x_seats_aft, x_seats_f, n_seats) - XLEMAC) / mac
+
+        mass_average_pax = self.get_paxcabw()  # TODO: get real data (done but check)
         xcg_old = self.xcg[-1]
         mass_old = self.mass[-1]
 
@@ -73,13 +82,23 @@ class Loading:
             mass_list = [mass_old]
 
             for x_cg_pax in x_cg_pax_list:
-                xcg, mass = self.get_new_xcg(xcg_list[-1], mass_list[-1], x_cg_pax, mass_average_pax)
+                if x_cg_pax > gap_xcg:  # When one of the columns become single column
+                    xcg, mass = self.get_new_xcg(xcg_list[-1], mass_list[-1], x_cg_pax, mass_average_pax)
+
+                else:
+                    # Load first and second passenger at same xcg
+                    _, _ = self.get_new_xcg(xcg_list[-1], mass_list[-1], x_cg_pax, mass_average_pax)
+                    xcg, mass = self.get_new_xcg(xcg_list[-1], mass_list[-1], x_cg_pax, mass_average_pax)
+
                 xcg_list.append(xcg)
                 mass_list.append(mass)
+
             return xcg_list, mass_list
 
+        gap_xcg = x_cg_f[n_seats - gap - 1]  # Final position when columns become single
+
         xcg_list_f, mass_list_f = load_passengers(x_cg_f)
-        xcg_list_aft, mass_list_aft = load_passengers(x_cg_aft)
+        xcg_list_aft, mass_list_aft = load_passengers(x_cg_aft, )
 
         return xcg_list_f, mass_list_f, xcg_list_aft, mass_list_aft
 
@@ -87,8 +106,8 @@ class Loading:
         xcg_old = self.xcg[-1]
         mass_old = self.mass[-1]
 
-        xcg_fuel = 0.8  #cg fuel is equal to cg fuel tank TODO: get real data
-        mass_fuel = self.data['fuel_max'] # TODO: get real data (done)
+        xcg_fuel = 0.8  # cg fuel is equal to cg fuel tank TODO: get real data
+        mass_fuel = self.data['fuel_max']  # TODO: get real data (done)
 
         xcg_end, mass_end = self.get_new_xcg(xcg_old, mass_old, xcg_fuel, mass_fuel)
 
@@ -119,7 +138,7 @@ class Loading:
         ax.plot(xcg_window_aft, mass_windows_aft, **window)
 
         # Get aisle seats xcg shift
-        xcg_aisle_f, mass_aisle_f, xcg_aisle_aft, mass_aisle_aft = self.load_seats(0.1, 0.6)
+        xcg_aisle_f, mass_aisle_f, xcg_aisle_aft, mass_aisle_aft = self.load_seats(0.1, 0.6, gap=2)
         l3, = ax.plot(xcg_aisle_f, mass_aisle_f, **aisle)
         ax.plot(xcg_aisle_aft, mass_aisle_aft, **aisle)
 
@@ -157,6 +176,13 @@ class Loading:
         plt.legend([l1, l2, l3, l4, l5], ['Cargo', 'Window seats', 'Aisle seats', 'Middle seats', 'Fuel'])
         plt.grid()
         plt.show()
+
+    # def get_xcg_ac(self):
+    #
+    #     xcg, mass = self.get_xcg_wing()
+    #     xcg, mass = self.get_xcg_tail()
+    #
+    #     return value
 
 
 def main():
