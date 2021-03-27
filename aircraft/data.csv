@@ -2,3 +2,11 @@ XcgOEW, 0.4
 xy, 2
 a, 2
 b, 2
+fuel_max, 7848
+dist_seats=31*0.0254
+ramp_mass, 42410
+MTOW, 42184
+OEW,24086
+pax_cab_w, 7450
+front_cargo_w, 1520
+aft_cargo_w, 1506
