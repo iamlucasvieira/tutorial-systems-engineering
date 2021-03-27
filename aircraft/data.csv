@@ -1,9 +1,9 @@
-XcgOEW, 0.4
+XcgOEW, 0.7925
 xy, 2
 a, 2
 b, 2
 fuel_max, 7848
-dist_seats=31*0.0254
+dist_seats, 0.7874
 ramp_mass, 42410
 MTOW, 42184
 OEW,24086
