@@ -200,7 +200,7 @@ class Loading:
         fig.suptitle("Loading diagram", fontsize=16)
         ax.set_xlabel(r'$X_{cg_{MAC}}$ [-]')
         ax.set_ylabel(f'Mass [kg]')
-        ax.set_xlim(0, 1)
+        ax.set_xlim(min_xcg*0.8, max_xcg*1.1)
         plt.legend([l1, l2, l3, l4, l5], ['Cargo', 'Window seats', 'Aisle seats', 'Middle seats', 'Fuel'])
         plt.grid()
         plt.show()
