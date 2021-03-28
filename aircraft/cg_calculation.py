@@ -40,7 +40,7 @@ class CenterOfGravity:
         self.cgs = self.components_cg()
         self.mass = self.components_mass()
 
-        # self.cg = self.aircraft_cg()
+        self.cg = self.aircraft_cg()
 
     def get_cr(self):
         """Computes the chord length at the rooot for wing, vertica tail and horizontal tail"""
@@ -64,7 +64,7 @@ class CenterOfGravity:
         """Returns a dictionary with the mass of each a/c component"""
         factors = self.factors
         MTOW = self.data['MTOW']
-        ME = 1  # TODO: Discover real value
+        ME = self.data['ME']  # We got from wikipedia  ALF502R-3
 
         mass = {}
 
@@ -75,14 +75,33 @@ class CenterOfGravity:
 
         return mass
 
-    def convert_mac(self, mac, x_chord):
-        cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
-        taper_ratio = self.data['taper']
-        y = (mac / cr - 1) / -2 / (1 - taper_ratio) * self.data['b']
-        sweep_LE = np.arctan(
-            np.tan(self.data['quart_sweep'] - 4 / self.data['A'] * (-25 / 100 * (1 - taper_ratio) / (1 + taper_ratio))))
-        a = y * np.sin(sweep_LE) / np.cos(sweep_LE) + x_chord
-        return a
+    def cg_distance_from_nose(self, x_loc, y, surface='w'):
+        """Returns the cg distance of the wing, vertical tail, and horizontal tail"""
+
+        if surface == 'w':
+            tr = self.data['taper']
+            quarter_sweep = self.data['quart_sweep']
+            A = self.data['A']
+            distance_to_root = self.data['nose_distance_w']
+        elif surface == 'v':
+            tr = self.data['taper_v']
+            quarter_sweep = self.data['quart_sweep_v']
+            A = self.data['A_v']
+            distance_to_root = self.data['nose_distance_v']
+        elif surface =='h':
+            tr = self.data['taper_h']
+            quarter_sweep = self.data['quart_sweep_h']
+            A = self.data['A_h']
+            distance_to_root = self.data['nose_distance_h']
+        else:
+            return None
+
+        sweep_le = np.arctan(np.tan(quarter_sweep) - 4 / A * (-0.25 * (1 - tr) / (1 + tr)))
+
+        # The c.g. is given as the distance to the leading edge of the root + the distance of the leading edge of the root to the a/c nose
+        cg_distance = x_loc + y * np.tan(sweep_le) + distance_to_root
+
+        return cg_distance
 
     def chord_at_pctg(self, root_pctg, surface='w'):
         """Returns the chord length at n% from the
@@ -107,33 +126,56 @@ class CenterOfGravity:
             return None
 
         y = root_pctg * b / 2
-        return cr * (1 - 2 * (1 - taper_ratio) * y / b)
+        return cr * (1 - 2 * (1 - taper_ratio) * y / b), y
 
     def components_cg(self):
         """Returns a dictionary with the cg of each a/c component"""
         cgs = {}
 
-        cgs['wing'] = self.convert_mac(0.38 * self.chord_at_pctg(0.4, surface='w'))
+        # To compute the c.g. position: first the it is found as a distance in the chord. Then it is transformed into distance to nose
+
+        chord_cg_w, dist_le_w = self.chord_at_pctg(0.4, surface='w')
+        cgs['wing'] = self.cg_distance_from_nose(chord_cg_w * 0.38 , dist_le_w, surface='w')
+
+        chord_cg_h, dist_le_h= self.chord_at_pctg(0.38, surface='h')
+        cgs['horizontal_tail'] = self.cg_distance_from_nose(chord_cg_h*0.42,dist_le_h, surface='h')
+
+        chord_cg_v, dist_le_v= self.chord_at_pctg(0.38, surface='v')
+        cgs['vertical_tail'] = self.cg_distance_from_nose(chord_cg_v * 0.43, dist_le_v, surface='v')
+
         cgs['fuselage'] = 0.42 * self.data['l_f']
-        cgs['horizontal_tail'] = self.convert_mac(0.42 * self.chord_at_pctg(0.38, surface='h'))
-        cgs['vertical_tail'] = self.convert_mac(0.42 * self.chord_at_pctg(0.55, surface='v'))
 
         return cgs
 
     def aircraft_cg(self):
         """Returns the aircraft cg wrt the three main groups: wing, fuselage and tail"""
-        numerator = 0
-        denominator = 0
-        for mass, cg in zip(self.mass, self.cgs):
-            numerator += mass * cg
-            denominator += mass
+        numerator, denominator = 0, 0
+
+        for group in ['wing', 'horizontal_tail', 'vertical_tail', ]:
+            numerator += self.mass[group] * self.cgs[group]
+            denominator += self.mass[group]
 
         return numerator / denominator
 
 
+    def print(self):
+        print('-'*60)
+        print(f"{'c.g. calculation':^60}")
+        print('-'*60)
+
+        print(f"{'Aircraft c.g.':<30} {self.cg:<30}")
+
+        print(f"{'Wing c.g.':<30} {self.cgs['wing']:<30}")
+        print(f"{'H. tail c.g.':<30} {self.cgs['horizontal_tail']:<30}")
+        print(f"{'V. tail c.g.':<30} {self.cgs['vertical_tail']:<30}")
+        print(f"{'Fuselage c.g.':<30} {self.cgs['fuselage']:<30}")
+
+
+
+
 def main():
     cg_oew = CenterOfGravity()
-
+    cg_oew.print()
 
 if __name__ == "__main__":
     main()
