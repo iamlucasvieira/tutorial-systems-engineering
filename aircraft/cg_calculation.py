@@ -39,7 +39,7 @@ class CenterOfGravity:
         # self.mass = self.components_mass()
 
         self.chord_at_pctg(1)
-
+        self.get_sweep_angle_le()
         self.cg = self.aircraft_cg()
 
     def Swet(self):
@@ -78,7 +78,7 @@ class CenterOfGravity:
         y = root_pctg * b / 2
         return cr * (1 - 2 * (1 - taper_ratio) * y / b)
 
-    def convert_mac(self, mac,x_chord):
+    def convert_mac(self, mac, x_chord):
         cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
         taper_ratio = self.data['taper']
         y=(mac/cr-1)/-2/(1 - taper_ratio)*self.data['b']
@@ -86,7 +86,7 @@ class CenterOfGravity:
         a= y*np.sin(sweep_LE)/np.cos(sweep_LE)+x_chord
         return a
 
-
+    def chord_at_pctg(self, root_pctg):
         """Returns the chord length at n% from the """
 
         taper_ratio = self.data['taper']
