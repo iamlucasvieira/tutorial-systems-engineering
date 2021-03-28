@@ -1,10 +1,10 @@
 import csv
 
 
-def load_data():
+def load_data(file_name):
     """Returns csv data"""
     data = {}
-    with open('data.csv', newline='') as csvfile:
+    with open(file_name, newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in reader:
             if len(row) == 2:
