@@ -32,15 +32,21 @@ class CenterOfGravity:
                 'systems': 0.17,  # w.r.t MTO
             }
 
-        # self.wet_area = self.Swet()
-        # self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
+        self.get_cr()
 
-        # self.cgs = self.components_cg()
-        # self.mass = self.components_mass()
+        self.wet_area = self.Swet()
+        self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
 
-        self.chord_at_pctg(1)
-        self.get_sweep_angle_le()
-        self.cg = self.aircraft_cg()
+        self.cgs = self.components_cg()
+        self.mass = self.components_mass()
+
+        # self.cg = self.aircraft_cg()
+
+    def get_cr(self):
+        """Computes the chord length at the rooot for wing, vertica tail and horizontal tail"""
+        self.cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
+        self.cr_h = 2 * self.data['S_h'] / ((self.data['taper_h'] + 1) * self.data['b_h'])
+        self.cr_v = 2 * self.data['S_v'] / ((self.data['taper_v'] + 1) * self.data['b_half_v'] * 2)
 
     def Swet(self):
         dfus = 3.56
@@ -48,8 +54,7 @@ class CenterOfGravity:
         Swnet = self.data['S'] * 2 - 26.21 / 9 * 1.4 * dfus
         tc = self.data['t/c']
         kf = 0.2  # done
-        cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
-        self.cr = cr
+        cr = self.cr
         bcw = 26.21
         Sh = self.data['S_h']
         Sv = self.data['S_v']
@@ -70,43 +75,52 @@ class CenterOfGravity:
 
         return mass
 
-    def chord_at_pctg(self, root_pctg):
-        """Returns the chord length at n% from the """
-        cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
-        taper_ratio = self.data['taper']
-        b = self.data['b']
-        y = root_pctg * b / 2
-        return cr * (1 - 2 * (1 - taper_ratio) * y / b)
-
     def convert_mac(self, mac, x_chord):
         cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
         taper_ratio = self.data['taper']
-        y=(mac/cr-1)/-2/(1 - taper_ratio)*self.data['b']
-        sweep_LE=np.arctan(np.tan(self.data['quart_sweep']-4/self.data['A']*(-25/100*(1-taper_ratio)/(1+taper_ratio))))
-        a= y*np.sin(sweep_LE)/np.cos(sweep_LE)+x_chord
+        y = (mac / cr - 1) / -2 / (1 - taper_ratio) * self.data['b']
+        sweep_LE = np.arctan(
+            np.tan(self.data['quart_sweep'] - 4 / self.data['A'] * (-25 / 100 * (1 - taper_ratio) / (1 + taper_ratio))))
+        a = y * np.sin(sweep_LE) / np.cos(sweep_LE) + x_chord
         return a
 
-    def chord_at_pctg(self, root_pctg):
-        """Returns the chord length at n% from the """
+    def chord_at_pctg(self, root_pctg, surface='w'):
+        """Returns the chord length at n% from the
 
-        taper_ratio = self.data['taper']
-        b = self.data['b']
+        args:
+            root_pctg (float): pctg of the root where the chord is wanted
+            surface (str): 'w'for wing, 'v' for vertical tail, 'h' for horizontal tail
+        """
+        if surface == 'w':
+            taper_ratio = self.data['taper']
+            b = self.data['b']
+            cr = self.cr
+        elif surface == 'v':
+            taper_ratio = self.data['taper_v']
+            b = self.data['b_half_v'] * 2
+            cr = self.cr_v
+        elif surface == 'h':
+            taper_ratio = self.data['taper_h']
+            b = self.data['b_h']
+            cr = self.cr
+        else:
+            return None
+
         y = root_pctg * b / 2
         return cr * (1 - 2 * (1 - taper_ratio) * y / b)
 
-
     def components_cg(self):
         """Returns a dictionary with the cg of each a/c component"""
-
         cgs = {}
 
-        cr = self.cr
-        cgs['wing'] = 0.38 * self.data['b'] / 2
-        cgs['fuselage'] = 0
-        cgs['horizontal_tail'] = 0
-        cgs['vertical_tail'] = 0
+        cgs['wing'] = self.convert_mac(0.38 * self.chord_at_pctg(0.4, surface='w'))
+        cgs['fuselage'] = 0.42 * self.data['l_f']
+        cgs['horizontal_tail'] = self.convert_mac(0.42 * self.chord_at_pctg(0.38, surface='h'))
+        cgs['vertical_tail'] = self.convert_mac(0.42 * self.chord_at_pctg(0.55, surface='v'))
 
-    def aircraft_cg():
+        return cgs
+
+    def aircraft_cg(self):
         """Returns the aircraft cg wrt the three main groups: wing, fuselage and tail"""
         numerator = 0
         denominator = 0

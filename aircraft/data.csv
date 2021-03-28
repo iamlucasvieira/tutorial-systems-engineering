@@ -7,23 +7,31 @@ OEW,24086
 pax_cab_w, 7450
 front_cargo_w, 1520
 aft_cargo_w, 1506
-mac, 3.17
-XLEMAC, 10
+
+
+## Wing dimensions ##
 S, 77.3
 mac, 3.17
+XLEMAC, 10
 b, 26.21
 A, 8.89
-quart_sweep, 15
+quarter_sweep, 15
 taper, 0.356
+t/c,12.98
+
+## Horizontal wing dimensions ##
 b_h, 11.09
 S_h, 15.61
 l_h, 12.35
 A_h, 7.88
 quart_sweep_h, 20
 taper_h, 0.410
+
+## Fuselage dimensions ##
 b_f, 3.56
 h_f, 3.56
 l_f, 26.5
+
 l_fn, 5
 b_n, 1.4
 l_n, 2.6
@@ -34,4 +42,11 @@ h_cruise, 29000
 z_h, 4.7
 S_hld, 19.51
 CL_max, 3.43
-t/c,12.98
+
+
+## Vertical tail dimensions ##
+S_v, 15.51
+b_half_v, 4.85
+A_v, 1.52
+taper_v, 0.67
+quart_sweep_v, 36
