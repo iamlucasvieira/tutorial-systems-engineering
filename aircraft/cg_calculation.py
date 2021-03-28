@@ -1,5 +1,6 @@
-from helpers import load_data
 import numpy as np
+
+from helpers import load_data
 
 
 class CenterOfGravity:
@@ -31,8 +32,8 @@ class CenterOfGravity:
                 'systems': 0.17,  # w.r.t MTO
             }
 
-        self.wet_area = self.Swet()
-        self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
+        # self.wet_area = self.Swet()
+        # self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
 
         self.cgs = self.components_cg()
         self.mass = self.components_mass()
@@ -42,10 +43,11 @@ class CenterOfGravity:
     def Swet(self):
         dfus = 3.56
         lfus = self.data['l_f']
-        Swnet = self.data['S'] * 2 -26.21/9*1.4*dfus
+        Swnet = self.data['S'] * 2 - 26.21 / 9 * 1.4 * dfus
         tc = self.data['t/c']
         kf = 0.2  # done
-        cr = 26.21/9*1.4
+        cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
+        self.cr = cr
         bcw = 26.21
         Sh = self.data['S_h']
         Sv = self.data['S_v']
@@ -68,26 +70,24 @@ class CenterOfGravity:
 
     def components_cg(self):
         """Returns a dictionary with the cg of each a/c component"""
-        
+
         cgs = {}
 
-        Cr = 2*A/((taper_ratio + 1)*b)
-        cgs['wing'] = 0.38*self.data['b']/2*
+        cr =
+        cgs['wing'] = 0.38 * self.data['b'] / 2
         cgs['fuselage'] = 0
         cgs['horizontal_tail'] = 0
         cgs['vertical_tail'] = 0
 
-    def aircraft_cg()
+    def aircraft_cg():
         """Returns the aircraft cg wrt the three main groups: wing, fuselage and tail"""
         numerator = 0
         denominator = 0
         for mass, cg in zip(self.mass, self.cgs):
-            numerator += mass*cg
+            numerator += mass * cg
             denominator += mass
 
-        return numerator/denominator
-
-
+        return numerator / denominator
 
 
 def main():
