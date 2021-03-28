@@ -4,7 +4,7 @@ from helpers import load_data
 
 class Stabcont:
     def __init__(self):
-        self.data=load_data()
+        self.data=load_data("data.csv")
 
         T=288.15-0.3048*self.data['h_cruise']*6.5/1000
         a=np.sqrt(1.4*T*287)
@@ -62,8 +62,8 @@ class Stabcont:
         c_r=self.data['c_r']
         CL_aw= self.getCLaw(fc)
         taper=self.data['taper']
-
-        S_net=S-2* b_f/2*(c_r+c_r*taper*b/b_f)/2
+        c_fus=c_r-c_r*(1-taper)*b_f/2/b
+        S_net=S - 2*(b_f/2*(c_r+c_fus)/2)
 
         CLaminh=CL_aw*(1+2.15*b_f/b)*S_net/S+np.pi/2*b_f**2/S
 
@@ -197,8 +197,8 @@ class Stabcont:
         plt.plot(xcgrange,stabrange[0])
         plt.plot(xcgrange,stabrange[1],label='S.M.')
         plt.plot(xcgrange, contrange)
-        plt.xlabel(r'$\frac{x_{cg}}{mac}$')
-        plt.ylabel(r'$\frac{S_h}{S}$')
+        plt.xlabel(r'$\frac{x_{cg}}{mac}$',fontsize=14)
+        plt.ylabel(r'$\frac{S_h}{S}$',fontsize=14)
         plt.ylim((0))
         plt.legend()
         plt.grid()
@@ -211,6 +211,9 @@ class Stabcont:
 if __name__=="__main__":
     ac=Stabcont()
     ac.scissorplot()
+    print(ac.getx_ac('cruise'))
+
+
 
 
 
