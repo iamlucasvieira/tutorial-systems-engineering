@@ -205,6 +205,7 @@ class Loading:
         plt.grid()
         plt.show()
 
+
     # def get_xcg_ac(self):
     #
     #     xcg, mass = self.get_xcg_wing()

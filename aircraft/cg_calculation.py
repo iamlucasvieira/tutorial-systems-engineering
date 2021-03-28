@@ -1,4 +1,5 @@
 from helpers import load_data
+import numpy as np
 
 
 class CenterOfGravity:
@@ -30,11 +31,63 @@ class CenterOfGravity:
                 'systems': 0.17,  # w.r.t MTO
             }
 
+        self.wet_area = self.Swet()
+        self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
 
-    def wing_mass(self):
-        factor = self.factors['wing']
+        self.cgs = self.components_cg()
+        self.mass = self.components_mass()
 
-        #
+        self.cg = self.aircraft_cg()
+
+    def Swet(self):
+        dfus = 3.56
+        lfus = self.data['l_f']
+        Swnet = self.data['S'] * 2 -26.21/9*1.4*dfus
+        tc = self.data['t/c']
+        kf = 0.2  # done
+        cr = 26.21/9*1.4
+        bcw = 26.21
+        Sh = self.data['S_h']
+        Sv = self.data['S_v']
+        return np.pi / dfus * (lfus - 1.3 * dfus) + Swnet * (2 + 0.5 * tc) + kf * bcw * cr + 2 * (Sh + Sv)
+
+    def components_mass(self):
+        """Returns a dictionary with the mass of each a/c component"""
+        factors = self.factors
+        MTOW = 1
+        ME = 1
+
+        mass = {}
+
+        mass['wing'] = factors['wing'] * self.exposed_area + factors['main_gear'] * MTOW + factors['power_plant'] * ME
+        mass['fuselage'] = factors['fuselage'] * self.wet_area + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
+        mass['horizontal_tail'] = factors['horizontal_tail'] * MTOW
+        mass['vertical_tail'] = factors['vertical_tail'] * MTOW
+
+        return mass
+
+    def components_cg(self):
+        """Returns a dictionary with the cg of each a/c component"""
+        
+        cgs = {}
+
+        Cr = 2*A/((taper_ratio + 1)*b)
+        cgs['wing'] = 0.38*self.data['b']/2*
+        cgs['fuselage'] = 0
+        cgs['horizontal_tail'] = 0
+        cgs['vertical_tail'] = 0
+
+    def aircraft_cg()
+        """Returns the aircraft cg wrt the three main groups: wing, fuselage and tail"""
+        numerator = 0
+        denominator = 0
+        for mass, cg in zip(self.mass, self.cgs):
+            numerator += mass*cg
+            denominator += mass
+
+        return numerator/denominator
+
+
 
 
 def main():
