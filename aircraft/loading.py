@@ -11,7 +11,7 @@ class Loading:
         self.data = load_data(file_name)
         self.xcg = [
             self.data['XcgOEW']]  # assumed to be 0.25c we can update this later in more detail if we find another way
-        self.mass = [0]
+        self.mass = [self.data['OEW']]
 
     def get_pax_mass(self):
         """Returns the passenger + cabin luggage masses """
@@ -24,6 +24,26 @@ class Loading:
         pax_luggage_m = ramp_mass - fuel_mass - front_cargo_w - aft_cargo_w - OEW
 
         return pax_luggage_m / 100
+
+    def w_wing(self):
+        #GD method
+        S=15.61*10.7639104
+        A=7.88
+        M_h=432*0.514444444/np.sqrt(1.4*287*(288.15-0.0065*8840))
+        tc=0.1298
+        W_TO=42184/0.45359237
+        lamb=0.356
+        n_ult=1.5
+        w_wing= 0.00428*(S**0.48)*A*(M_h)**0.43*(W_TO*n_ult)**0.84*lamb**0.14/ ((100*(tc))**0.76*np.cos(lamb)**1.54)
+
+        #correction due to two engines
+        w_wing=w_wing*0.95
+
+        #converting to kg rom lbs
+        w_wing= w_wing * 0.45359237
+        return w_wing
+
+
 
     def get_new_xcg(self, xcg_old, mass_old, xcg_item, mass_item):
         """Returns the new mass and c.g. after an item is added"""
@@ -180,10 +200,11 @@ class Loading:
         fig.suptitle("Loading diagram", fontsize=16)
         ax.set_xlabel(r'$X_{cg_{MAC}}$ [-]')
         ax.set_ylabel(f'Mass [kg]')
-        ax.set_xlim(0, 1)
+        ax.set_xlim(min_xcg*0.8, max_xcg*1.1)
         plt.legend([l1, l2, l3, l4, l5], ['Cargo', 'Window seats', 'Aisle seats', 'Middle seats', 'Fuel'])
         plt.grid()
         plt.show()
+
 
     # def get_xcg_ac(self):
     #
@@ -196,6 +217,7 @@ class Loading:
 def main():
     loading = Loading()
     loading.plot()
+    loading.w_wing()
 
 
 if __name__ == "__main__":
