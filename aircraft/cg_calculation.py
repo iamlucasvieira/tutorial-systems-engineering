@@ -35,8 +35,10 @@ class CenterOfGravity:
         # self.wet_area = self.Swet()
         # self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
 
-        self.cgs = self.components_cg()
-        self.mass = self.components_mass()
+        # self.cgs = self.components_cg()
+        # self.mass = self.components_mass()
+
+        self.chord_at_pctg(1)
 
         self.cg = self.aircraft_cg()
 
@@ -68,12 +70,20 @@ class CenterOfGravity:
 
         return mass
 
+    def chord_at_pctg(self, root_pctg):
+        """Returns the chord length at n% from the """
+        cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
+        taper_ratio = self.data['taper']
+        b = self.data['b']
+        y = root_pctg * b / 2
+        return cr * (1 - 2 * (1 - taper_ratio) * y / b)
+
     def components_cg(self):
         """Returns a dictionary with the cg of each a/c component"""
 
         cgs = {}
 
-        cr =
+        cr = self.cr
         cgs['wing'] = 0.38 * self.data['b'] / 2
         cgs['fuselage'] = 0
         cgs['horizontal_tail'] = 0
