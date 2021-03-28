@@ -63,8 +63,8 @@ class CenterOfGravity:
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
         factors = self.factors
-        MTOW = 1
-        ME = 1
+        MTOW = self.data['MTOW']
+        ME = 1  # TODO: Discover real value
 
         mass = {}
 
@@ -89,7 +89,7 @@ class CenterOfGravity:
 
         args:
             root_pctg (float): pctg of the root where the chord is wanted
-            surface (str): 'w'for wing, 'v' for vertical tail, 'h' for horizontal tail
+            surface (str): 'w' for wing, 'v' for vertical tail, 'h' for horizontal tail
         """
         if surface == 'w':
             taper_ratio = self.data['taper']
