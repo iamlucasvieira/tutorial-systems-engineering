@@ -78,6 +78,23 @@ class CenterOfGravity:
         y = root_pctg * b / 2
         return cr * (1 - 2 * (1 - taper_ratio) * y / b)
 
+    def convert_mac(self, mac,x_chord):
+        cr = 2 * self.data['S'] / ((self.data['taper'] + 1) * self.data['b'])
+        taper_ratio = self.data['taper']
+        y=(mac/cr-1)/-2/(1 - taper_ratio)*self.data['b']
+        sweep_LE=np.arctan(np.tan(self.data['quart_sweep']-4/self.data['A']*(-25*(1-taper_ratio)/(1+taper_ratio))))
+        a= y*np.sin(sweep_LE)/np.cos(sweep_LE)+x_chord
+        return a
+
+
+        """Returns the chord length at n% from the """
+
+        taper_ratio = self.data['taper']
+        b = self.data['b']
+        y = root_pctg * b / 2
+        return cr * (1 - 2 * (1 - taper_ratio) * y / b)
+
+
     def components_cg(self):
         """Returns a dictionary with the cg of each a/c component"""
 
