@@ -12,7 +12,7 @@ aft_cargo_w, 1098
 ## Wing dimensions ##
 S, 77.3
 mac, 3.17
-XLEMAC, 10
+XLEMAC, 10.8
 b, 26.21
 A, 8.89
 quart_sweep, 15
@@ -28,7 +28,7 @@ l_h, 12.35
 A_h, 7.88
 quart_sweep_h, 20
 taper_h, 0.410
-nose_distance_h, 24.2166
+nose_distance_h, 23.8
 
 ## Fuselage dimensions ##
 b_f, 3.56
@@ -53,7 +53,7 @@ b_half_v, 4.85
 A_v, 1.52
 taper_v, 0.67
 quart_sweep_v, 36
-nose_distance_v, 20.76
+nose_distance_v, 17.97
 
 
 ME, 2424
