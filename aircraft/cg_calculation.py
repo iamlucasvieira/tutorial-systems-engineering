@@ -193,6 +193,9 @@ class CenterOfGravity:
         aircraft_cg = (numerator / denominator - XLEMAC) / mac
         return aircraft_cg
 
+    def wrt_mac(self, value):
+        return (value-self.data['XLEMAC'])/self.data['mac']
+
     def print(self):
         print('-' * 60)
         print(f"{'c.g. calculation':^60}")
@@ -200,10 +203,10 @@ class CenterOfGravity:
 
         print(f"{'Aircraft c.g.':<30} {self.cg:<30}")
 
-        print(f"{'Wing c.g.':<30} {self.cgs['wing']:<30}")
-        print(f"{'H. tail c.g.':<30} {self.cgs['horizontal_tail']:<30}")
-        print(f"{'V. tail c.g.':<30} {self.cgs['vertical_tail']:<30}")
-        print(f"{'Fuselage c.g.':<30} {self.cgs['fuselage']:<30}")
+        print(f"{'Wing c.g.':<30} {self.wrt_mac(self.cgs['wing']):<30}")
+        print(f"{'H. tail c.g.':<30} {self.wrt_mac(self.cgs['horizontal_tail']):<30}")
+        print(f"{'V. tail c.g.':<30} {self.wrt_mac(self.cgs['vertical_tail']):<30}")
+        print(f"{'Fuselage c.g.':<30} {self.wrt_mac(self.cgs['fuselage']):<30}")
 
 
 def main():
