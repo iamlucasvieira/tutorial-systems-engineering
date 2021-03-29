@@ -19,7 +19,7 @@ A, 10.2235
 quart_sweep, 15
 taper, 0.356
 t/c,12.98
-nose_distance_w, 10.6
+nose_distance_w, 9.8
 
 ## Horizontal wing dimensions ##
 b_h, 11.09
@@ -28,7 +28,7 @@ l_h, 12.35
 A_h, 7.88
 quart_sweep_h, 20
 taper_h, 0.410
-nose_distance_h, 21.2
+nose_distance_h, 23.8
 
 ## Fuselage dimensions ##
 b_f, 3.56
@@ -53,7 +53,7 @@ b_half_v, 4.85
 A_v, 1.52
 taper_v, 0.67
 quart_sweep_v, 36
-nose_distance_v, 22
+nose_distance_v, 17.97
 
 
 ME, 2424
