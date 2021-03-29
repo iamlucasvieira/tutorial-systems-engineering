@@ -34,8 +34,7 @@ class CenterOfGravity:
 
         self.get_cr()
 
-        self.wet_area = self.get_areas()
-        self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
+        self.areas = self.get_areas()
 
         self.cgs = self.components_cg()
         self.mass = self.components_mass()
@@ -48,10 +47,6 @@ class CenterOfGravity:
         self.cr_h = 2 * self.data['S_h'] / ((self.data['taper_h'] + 1) * self.data['b_h'])
         self.cr_v = 2 * self.data['S_v'] / ((self.data['taper_v'] + 1) * self.data['b_half_v'] * 2)
 
-    @staticmethod
-    def wet_to_exposed(mass):
-        return mass / 2 * (1 + 0.2 * self.data['t/c'])
-
     def get_areas(self):
         """Returns the areas of each group to estimate their mass"""
         areas = {}
@@ -59,17 +54,18 @@ class CenterOfGravity:
         # Wing exposed area
         S = self.data['S']
         d_fus = self.data['l_h']
-
+        b = self.data['b']
         chord_fuselage, _ = self.chord_at_pctg(d_fus / b, surface='w')
-
         area_w = S - d_fus * chord_fuselage
         areas['wing'] = area_w
 
         # Vertical tail area
-        area_v= self.data['S_v']
+        area_v = self.data['S_v']
+        areas['vertical_tail'] = area_v
 
         # Horizontal tail area
         area_h = self.data['S_h']
+        areas['horizontal_tail'] = area_h
 
         # Fuselage area
         l_fus = self.data['l_f']
@@ -83,6 +79,7 @@ class CenterOfGravity:
         # Systems "area" (For systems the MTOW is used for mass estimation)
         areas['systems'] = self.data['MTOW']
 
+        return areas
 
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
