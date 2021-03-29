@@ -169,7 +169,7 @@ class Loading:
         if plot:
             # Create plot
             fig, ax = plt.subplots()
-            ax.plot(self.xcg, self.mass)
+            ax.plot(self.xcg[0], self.mass[0])
 
             l1, = ax.plot(xcg_cargo_f, mass_cargo_f, **cargo)
             ax.plot(xcg_cargo_aft, mass_cargo_aft, **cargo)
@@ -209,7 +209,7 @@ def main():
     # loading = Loading(file_name = 'data.csv')
     # loading.plot()
     loading = Loading()
-    loading.get_cg_shift(plot=False)
+    loading.get_cg_shift()
 
 
 if __name__ == "__main__":
