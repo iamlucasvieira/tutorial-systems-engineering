@@ -9,13 +9,13 @@ from helpers import load_data
 class Loading:
 
     # def __init__(self, file_name='NewData.csv'):
-    def __init__(self, file_name = 'data.csv', mac=1, change = 0):
+    def __init__(self, file_name='data.csv', mac=1, change=0):
         self.data = load_data(file_name)
 
         # Get cg at oew:
         CG = CenterOfGravity()
         print(CG.cg)
-        xcg_oew = (CG.cg*mac - change)/mac
+        xcg_oew = (CG.cg * mac - change) / mac
         print(xcg_oew)
         self.xcg = [xcg_oew]  # assumed to be 0.25c we can update this later in more detail if we find another way
         self.mass = [self.data['OEW']]
@@ -118,12 +118,12 @@ class Loading:
         xcg_end, mass_end = self.get_new_xcg(xcg_old, mass_old, xcg_fuel, mass_fuel)
 
         return [xcg_old, xcg_end], [mass_old, mass_end]
-    
+
     def get_maxmincg(self):
         margin = 0.02
         max_xcg, min_xcg = max(self.xcg) * (1 + margin), min(self.xcg) * (1 - margin)
-        #print("cg",self.xcg)
-        print("Check",min_xcg, max_xcg)
+        # print("cg",self.xcg)
+        print("Check", min_xcg, max_xcg)
         return min_xcg, max_xcg
 
     def get_cg_shift(self, plot=True):
@@ -136,41 +136,25 @@ class Loading:
         middle = {'c': '#ff6361', 'marker': '+'}
         fuel = {'c': '#ffa600', 'marker': 's'}
 
-        # Create plot
-        fig, ax = plt.subplots()
-        ax.plot(self.xcg, self.mass)
-
         # Get cargo xcg shift
         xcg_cargo_f, mass_cargo_f, xcg_cargo_aft, mass_cargo_aft = self.load_cargo()
-        l1, = ax.plot(xcg_cargo_f, mass_cargo_f, **cargo)
-        ax.plot(xcg_cargo_aft, mass_cargo_aft, **cargo)
 
         # Get window seats xcg shift
         xcg_window_f, mass_windows_f, xcg_window_aft, mass_windows_aft = self.load_seats()
-        l2, = ax.plot(xcg_window_f, mass_windows_f, **window)
-        ax.plot(xcg_window_aft, mass_windows_aft, **window)
 
         # Get aisle seats xcg shift
         xcg_aisle_f, mass_aisle_f, xcg_aisle_aft, mass_aisle_aft = self.load_seats(gap=2)
-        l3, = ax.plot(xcg_aisle_f, mass_aisle_f, **aisle)
-        ax.plot(xcg_aisle_aft, mass_aisle_aft, **aisle)
 
         # Get middle seats xcg shift
         xcg_middle_f, mass_middle_f, xcg_middle_aft, mass_middle_aft = self.load_seats()
-        l4, = ax.plot(xcg_middle_f, mass_middle_f, **middle)
-        ax.plot(xcg_middle_aft, mass_middle_aft, **middle)
 
         # Get fuel xcg shift
         xcg_fuel, mass_fuel = self.load_fuel()
-        l5, = ax.plot(xcg_fuel, mass_fuel, **fuel)
 
         # Find and plot maximum xcg shift
         margin = 0.02
         max_xcg, min_xcg = max(self.xcg) * (1 + margin), min(self.xcg) * (1 - margin)
         max_mass, min_mass = max(self.mass), min(self.mass)
-
-        ax.plot([max_xcg, max_xcg], [min_mass, max_mass], '--k', alpha=0.55)
-        ax.plot([min_xcg, min_xcg], [min_mass, max_mass], '--k', alpha=0.55)
 
         # Print results
         print('-' * 40)
@@ -183,6 +167,27 @@ class Loading:
 
         # Add plot labels, title, legend
         if plot:
+            # Create plot
+            fig, ax = plt.subplots()
+            ax.plot(self.xcg, self.mass)
+
+            l1, = ax.plot(xcg_cargo_f, mass_cargo_f, **cargo)
+            ax.plot(xcg_cargo_aft, mass_cargo_aft, **cargo)
+
+            l2, = ax.plot(xcg_window_f, mass_windows_f, **window)
+            ax.plot(xcg_window_aft, mass_windows_aft, **window)
+
+            l3, = ax.plot(xcg_aisle_f, mass_aisle_f, **aisle)
+            ax.plot(xcg_aisle_aft, mass_aisle_aft, **aisle)
+
+            l4, = ax.plot(xcg_middle_f, mass_middle_f, **middle)
+            ax.plot(xcg_middle_aft, mass_middle_aft, **middle)
+
+            l5, = ax.plot(xcg_fuel, mass_fuel, **fuel)
+
+            ax.plot([max_xcg, max_xcg], [min_mass, max_mass], '--k', alpha=0.55)
+            ax.plot([min_xcg, min_xcg], [min_mass, max_mass], '--k', alpha=0.55)
+
             fig.suptitle("Loading diagram", fontsize=16)
             ax.set_xlabel(r'$X_{cg_{MAC}}$ [-]')
             ax.set_ylabel(f'Mass [kg]')
@@ -204,7 +209,7 @@ def main():
     # loading = Loading(file_name = 'data.csv')
     # loading.plot()
     loading = Loading()
-    loading.get_cg_shift()
+    loading.get_cg_shift(plot=False)
 
 
 if __name__ == "__main__":
