@@ -62,8 +62,9 @@ class CenterOfGravity:
         b = self.data['b']
         d_fus = self.data['l_h']
         ct = cr * t_c
+        chord_fuselage, _ = self.chord_at_pctg(d_fus / b, surface='w')
 
-        area_w = (cr + ct) * b / 2 - d_fus * cr
+        area_w = (cr + ct) * b / 2 - d_fus * chord_fuselage
         areas['wing'] = area_w
 
         # Vertical tail area
