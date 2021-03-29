@@ -2,19 +2,21 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from aircraft.cg_calculation import CenterOfGravity
+from cg_calculation import CenterOfGravity
 from helpers import load_data
 
 
 class Loading:
 
     # def __init__(self, file_name='NewData.csv'):
-    def __init__(self, file_name='data.csv'):
+    def __init__(self, file_name = 'data.csv', mac=1, change = 0):
         self.data = load_data(file_name)
 
         # Get cg at oew:
         CG = CenterOfGravity()
-        xcg_oew = CG.cg
+        print(CG.cg)
+        xcg_oew = (CG.cg*mac - change)/mac
+        print(xcg_oew)
         self.xcg = [xcg_oew]  # assumed to be 0.25c we can update this later in more detail if we find another way
         self.mass = [self.data['OEW']]
 
@@ -190,7 +192,9 @@ class Loading:
 
 
 def main():
-    loading = Loading()
+    loading = Loading(file_name = 'data.csv')
+    loading.plot()
+    loading = Loading(file_name = 'NewData.csv', mac = 3.17, change = 0.6)
     loading.plot()
 
 
