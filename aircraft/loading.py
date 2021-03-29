@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from aircraft.cg_calculation import CenterOfGravity
 from helpers import load_data
 
 
@@ -10,8 +11,11 @@ class Loading:
     #def __init__(self, file_name='NewData.csv'):
     def __init__(self, file_name='data.csv'):
         self.data = load_data(file_name)
-        self.xcg = [
-            self.data['XcgOEW']]  # assumed to be 0.25c we can update this later in more detail if we find another way
+
+        # Get cg at oew:
+        CG = CenterOfGravity()
+        xcg_oew = CG.cg
+        self.xcg = [xcg_oew]  # assumed to be 0.25c we can update this later in more detail if we find another way
         self.mass = [self.data['OEW']]
 
     def get_pax_mass(self):
