@@ -71,9 +71,9 @@ class CenterOfGravity:
         areas['wing'] = area_w
 
         # Vertical tail area
-
+        area_v= self.data['S_v']
         # Horizontal tail area
-
+        area_h = self.data['S_h']
 
         # Fuselage area
         l_fus = self.data['l_f']
