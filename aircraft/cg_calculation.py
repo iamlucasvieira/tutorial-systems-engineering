@@ -57,18 +57,17 @@ class CenterOfGravity:
         areas = {}
 
         # Wing exposed area
-        cr = self.cr
-        t_c = self.data['t/c']
-        b = self.data['b']
+        S = self.data['S']
         d_fus = self.data['l_h']
-        ct = cr * t_c
+
         chord_fuselage, _ = self.chord_at_pctg(d_fus / b, surface='w')
 
-        area_w = (cr + ct) * b / 2 - d_fus * chord_fuselage
+        area_w = S - d_fus * chord_fuselage
         areas['wing'] = area_w
 
         # Vertical tail area
         area_v= self.data['S_v']
+
         # Horizontal tail area
         area_h = self.data['S_h']
 
@@ -83,16 +82,7 @@ class CenterOfGravity:
 
         # Systems "area" (For systems the MTOW is used for mass estimation)
         areas['systems'] = self.data['MTOW']
-        # dfus = 3.56
-        # lfus = self.data['l_f']
-        # Swnet = self.data['S'] * 2 - 26.21 / 9 * 1.4 * dfus
-        # tc = self.data['t/c']
-        # kf = 0.2  # done
-        # cr = self.cr
-        # bcw = 26.21
-        # S_h = self.data['S_h']
-        # S_v = self.data['S_v']
-        # return np.pi / dfus * (lfus - 1.3 * dfus) + Swnet * (2 + 0.5 * tc) + kf * bcw * cr + 2 * (S_h + S_v)
+
 
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
