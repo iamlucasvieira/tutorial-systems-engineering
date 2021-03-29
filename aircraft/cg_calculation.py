@@ -89,16 +89,20 @@ class CenterOfGravity:
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
         factors = self.factors
-        areas=self.areas
+        areas = self.areas
         MTOW = self.data['MTOW']
         ME = self.data['ME']  # We got from wikipedia  ALF502R-3
+        area_w = areas['wing']
+        area_f = areas['fuselage']
+        area_v = areas['vertical_tail']
+        area_h = areas['horizontal_tail']
 
         mass = {}
 
-        mass['wing'] = factors['wing'] * areas['wing'] + factors['main_gear'] * MTOW + factors['power_plant'] * ME
-        mass['fuselage'] = factors['fuselage'] * areas['fuselage'] + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
-        mass['horizontal_tail'] = factors['horizontal_tail'] * areas['horizontal_tail']
-        mass['vertical_tail'] = factors['vertical_tail'] *  areas['vertical_tail']
+        mass['wing'] = factors['wing'] * area_w + factors['main_gear'] * MTOW + factors['power_plant'] * ME
+        mass['fuselage'] = factors['fuselage'] * area_f + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
+        mass['horizontal_tail'] = factors['horizontal_tail'] * area_h
+        mass['vertical_tail'] = factors['vertical_tail'] * area_v
 
         return mass
 
