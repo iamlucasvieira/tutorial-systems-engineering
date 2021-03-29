@@ -59,29 +59,22 @@ class CenterOfGravity:
         # Wing exposed area
         cr = self.cr
         t_c = self.data['t/c']
+        b = self.data['b']
+        d_fus = self.data['l_h']
         ct = cr * t_c
-        kq = 0.95
 
-        A = self.data['A']
-        S = self.data['S']
-        taper = self.data['taper']
-
-        volume_w = kq * t_c / (np.sqrt(1 + taper)) * S * np.sqrt(S / A)
-        area_w = (2 + 0.5 * t_c) * ((volume_w * np.sqrt(A * (1 + taper))) / (kq * t_c)) ** (2 / 3)
+        area_w = (cr + ct) * b / 2 - d_fus * cr
         areas['wing'] = area_w
 
         # Vertical tail area
 
         # Horizontal tail area
 
-
         # Fuselage area
         l_fus = self.data['l_f']
-        d_fus = self.data['l_h']
+
         area_f = np.pi * d_fus * (l_fus - 1.3 * d_fus)
         areas['fuselage'] = area_f
-
-
 
         # Power plant "area" (for power plant the mass estimation is based on engine mass)
         areas['power_plant'] = self.data['ME']
