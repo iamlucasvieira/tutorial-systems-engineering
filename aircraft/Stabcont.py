@@ -13,7 +13,8 @@ class Stabcont:
 
         self.data['mach_l']=self.data['v_app']*0.514444/np.sqrt(1.4*288.15*287)
 
-        c_r=4*self.data['S']/self.data['b']/(1+self.data['taper'])
+        c_r=2*self.data['S']/self.data['b']/(1+self.data['taper'])
+
         self.data['c_r']=c_r
 
     @staticmethod
