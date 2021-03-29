@@ -118,6 +118,13 @@ class Loading:
         xcg_end, mass_end = self.get_new_xcg(xcg_old, mass_old, xcg_fuel, mass_fuel)
 
         return [xcg_old, xcg_end], [mass_old, mass_end]
+    
+    def get_maxmincg(self):
+        margin = 0.02
+        max_xcg, min_xcg = max(self.xcg) * (1 + margin), min(self.xcg) * (1 - margin)
+        #print("cg",self.xcg)
+        print("Check",min_xcg, max_xcg)
+        return min_xcg, max_xcg
 
     def plot(self):
         """Plot the loading diagram"""
@@ -193,10 +200,11 @@ class Loading:
 
 
 def main():
-    loading = Loading(file_name = 'data.csv')
-    loading.plot()
+    # loading = Loading(file_name = 'data.csv')
+    # loading.plot()
     loading = Loading(file_name = 'NewData.csv', mac = 3.17, change = 0.6)
     loading.plot()
+    loading.get_maxmincg()
 
 
 if __name__ == "__main__":

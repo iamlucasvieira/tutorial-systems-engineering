@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from helpers import load_data
+from loading import Loading
+
 
 class Stabcont:
     def __init__(self, file_name = "data.csv"):
@@ -185,6 +187,10 @@ class Stabcont:
         return sratio
 
     def scissorplot(self):
+        load = Loading(file_name = 'NewData.csv', mac = 3.17, change = 0.6)
+        max_xcg, min_xcg = load.get_maxmincg()
+        print("Check Cg positions", min_xcg, max_xcg)
+        
         S=self.data['S']
         S_h=self.data['S_h']
 
@@ -195,6 +201,8 @@ class Stabcont:
         stabrange=self.stabline(xcgrange)
         contrange=self.contline(xcgrange)
 
+        plt.vlines(min_xcg,0,0.4)
+        plt.vlines(max_xcg,0,0.4)
         plt.plot(xcgrange,stabrange[0])
         plt.plot(xcgrange,stabrange[1],label='S.M.')
         plt.plot(xcgrange, contrange)
@@ -210,8 +218,8 @@ class Stabcont:
 
 
 if __name__=="__main__":
-    ac=Stabcont(file_name = "data.csv")
-    ac.scissorplot()
+    # ac=Stabcont(file_name = "data.csv")
+    # ac.scissorplot()
     ac=Stabcont(file_name = "NewData.csv")
     ac.scissorplot()
     print(ac.getx_ac('cruise'))
