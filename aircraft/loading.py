@@ -39,10 +39,10 @@ class Loading:
         XLEMAC = self.data['XLEMAC']
         mac = self.data['mac']
 
-        xcg_cargo_f = (6.625 - XLEMAC)/mac
+        xcg_cargo_f = (8.44 - XLEMAC) / mac
         mass_cargo_f = self.data['front_cargo_w']
 
-        xcg_cargo_aft = (19.875 - XLEMAC)/mac
+        xcg_cargo_aft = (16.88 - XLEMAC) / mac
         mass_cargo_aft = self.data['aft_cargo_w']
 
         xcg_f, mass_f = self.get_new_xcg(xcg_old, mass_old, xcg_cargo_f, mass_cargo_f)
