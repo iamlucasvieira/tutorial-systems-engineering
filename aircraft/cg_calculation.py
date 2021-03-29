@@ -34,8 +34,7 @@ class CenterOfGravity:
 
         self.get_cr()
 
-        self.wet_area = self.get_areas()
-        self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
+        self.areas = self.get_areas()
 
         self.cgs = self.components_cg()
         self.mass = self.components_mass()
@@ -57,19 +56,21 @@ class CenterOfGravity:
         areas = {}
 
         # Wing exposed area
-        cr = self.cr
-        t_c = self.data['t/c']
-        b = self.data['b']
+        S = self.data['S']
         d_fus = self.data['l_h']
-        ct = cr * t_c
+        b = self.data['b']
+        chord_fuselage, _ = self.chord_at_pctg(d_fus / b, surface='w')
 
-        area_w = (cr + ct) * b / 2 - d_fus * cr
+        area_w = S - d_fus * chord_fuselage
         areas['wing'] = area_w
 
         # Vertical tail area
-        area_v= self.data['S_v']
+        area_v = self.data['S_v']
+        areas['vertical_tail'] = area_v
+
         # Horizontal tail area
         area_h = self.data['S_h']
+        areas['horizontal_tail'] = area_h
 
         # Fuselage area
         l_fus = self.data['l_f']
@@ -82,29 +83,26 @@ class CenterOfGravity:
 
         # Systems "area" (For systems the MTOW is used for mass estimation)
         areas['systems'] = self.data['MTOW']
-        # dfus = 3.56
-        # lfus = self.data['l_f']
-        # Swnet = self.data['S'] * 2 - 26.21 / 9 * 1.4 * dfus
-        # tc = self.data['t/c']
-        # kf = 0.2  # done
-        # cr = self.cr
-        # bcw = 26.21
-        # S_h = self.data['S_h']
-        # S_v = self.data['S_v']
-        # return np.pi / dfus * (lfus - 1.3 * dfus) + Swnet * (2 + 0.5 * tc) + kf * bcw * cr + 2 * (S_h + S_v)
+
+        return areas
 
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
         factors = self.factors
+        areas = self.areas
         MTOW = self.data['MTOW']
         ME = self.data['ME']  # We got from wikipedia  ALF502R-3
+        area_w = areas['wing']
+        area_f = areas['fuselage']
+        area_v = areas['vertical_tail']
+        area_h = areas['horizontal_tail']
 
         mass = {}
 
-        mass['wing'] = factors['wing'] * self.exposed_area + factors['main_gear'] * MTOW + factors['power_plant'] * ME
-        mass['fuselage'] = factors['fuselage'] * self.wet_area + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
-        mass['horizontal_tail'] = factors['horizontal_tail'] * MTOW
-        mass['vertical_tail'] = factors['vertical_tail'] * MTOW
+        mass['wing'] = factors['wing'] * area_w + factors['main_gear'] * MTOW + factors['power_plant'] * ME
+        mass['fuselage'] = factors['fuselage'] * area_f + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
+        mass['horizontal_tail'] = factors['horizontal_tail'] * area_h
+        mass['vertical_tail'] = factors['vertical_tail'] * area_v
 
         return mass
 
@@ -188,7 +186,16 @@ class CenterOfGravity:
             numerator += self.mass[group] * self.cgs[group]
             denominator += self.mass[group]
 
-        return numerator / denominator
+        XLERC = self.data['XLERC']
+        mac = self.data['mac']
+        taper = self.data['taper']
+        b = self.data['b']
+        cr = self.cr
+
+        dist_rc_mac = (mac / cr - 1) / (-2 * (1 - taper)) * b
+
+        aircraft_cg = (numerator / denominator - (XLERC + dist_rc_mac)) / mac
+        return aircraft_cg
 
     def print(self):
         print('-' * 60)
