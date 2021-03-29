@@ -7,6 +7,7 @@ from helpers import load_data
 
 class Loading:
 
+    #def __init__(self, file_name='NewData.csv'):
     def __init__(self, file_name='data.csv'):
         self.data = load_data(file_name)
         self.xcg = [

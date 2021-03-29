@@ -3,18 +3,19 @@ fuel_max, 7848
 dist_seats, 0.7874
 ramp_mass, 42410
 MTOW, 42184
-OEW,24086*0.9
+OEW,21677.4
 pax_cab_w, 7450
-front_cargo_w, 1520+(0.75*0.1*24086)
-aft_cargo_w, 1506+(0.25*0.1*24086)
+front_cargo_w, 3326.45
+aft_cargo_w, 2108.15
 
+#Still need to implement OEW cg change and engine diameter change
 
 ## Wing dimensions ##
 S, 77.3
 mac, 3.17
 XLEMAC, 10
 b, 26.21
-A, 8.89*1.15
+A, 10.2235
 quart_sweep, 15
 taper, 0.356
 t/c,12.98

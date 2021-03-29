@@ -5,6 +5,7 @@ from helpers import load_data
 
 class CenterOfGravity:
 
+    #def __init__(self, file_name='NewData.csv', transport=True):
     def __init__(self, file_name='data.csv', transport=True):
         """Computes the aircraft center of gravity at operational empty weight"""
         self.data = load_data(file_name)
