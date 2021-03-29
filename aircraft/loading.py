@@ -169,7 +169,6 @@ class Loading:
         if plot:
             # Create plot
             fig, ax = plt.subplots()
-            ax.plot(self.xcg[0], self.mass[0])
 
             l1, = ax.plot(xcg_cargo_f, mass_cargo_f, **cargo)
             ax.plot(xcg_cargo_aft, mass_cargo_aft, **cargo)
