@@ -179,7 +179,8 @@ class Loading:
         ax.set_xlabel(r'$X_{cg_{MAC}}$ [-]')
         ax.set_ylabel(f'Mass [kg]')
         ax.set_xlim(min_xcg * 0.8, max_xcg * 1.1)
-        plt.legend([l1, l2, l3, l4, l5], ['Cargo', 'Window seats', 'Aisle seats', 'Middle seats', 'Fuel'])
+        plt.legend([l1, l2, l3, l4, l5],
+                   ['(1) Cargo', '(2) Window seats', '(3) Aisle seats', '(4) Middle seats', '(5)Fuel'])
         plt.grid()
         plt.show()
 
