@@ -186,7 +186,16 @@ class CenterOfGravity:
             numerator += self.mass[group] * self.cgs[group]
             denominator += self.mass[group]
 
-        return numerator / denominator
+        XLERC = self.data['XLERC']
+        mac = self.data['mac']
+        taper = self.data['taper']
+        b = self.data['b']
+        cr = self.cr
+
+        dist_rc_mac = (mac / cr - 1) / (-2 * (1 - taper)) * b
+
+        aircraft_cg = (numerator / denominator - (XLERC + dist_rc_mac)) / mac
+        return aircraft_cg
 
     def print(self):
         print('-' * 60)
