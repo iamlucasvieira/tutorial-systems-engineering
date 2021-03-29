@@ -5,7 +5,6 @@ from helpers import load_data
 
 class CenterOfGravity:
 
-    #def __init__(self, file_name='NewData.csv', transport=True):
     def __init__(self, file_name='data.csv', transport=True):
         """Computes the aircraft center of gravity at operational empty weight"""
         self.data = load_data(file_name)
@@ -188,16 +187,10 @@ class CenterOfGravity:
             numerator += self.mass[group] * self.cgs[group]
             denominator += self.mass[group]
 
-        XLERC = self.data['nose_distance_w']
+        XLEMAC = self.data['XLEMAC']
         mac = self.data['mac']
-        taper = self.data['taper']
-        b = self.data['b']
-        cr = self.cr
 
-        dist_rc_mac = (mac / cr - 1) / (-2 * (1 - taper)) * b
-
-        # aircraft_cg = (numerator / denominator - (XLERC + dist_rc_mac*np.tan(self.sweep_le))) / mac
-        aircraft_cg = (numerator / denominator - 10.8) / mac
+        aircraft_cg = (numerator / denominator - XLEMAC) / mac
         return aircraft_cg
 
     def print(self):
