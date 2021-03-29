@@ -36,11 +36,14 @@ class Loading:
         xcg_old = self.xcg[-1]
         mass_old = self.mass[-1]
 
-        xcg_cargo_f = -0.2  # TODO: get real data
-        mass_cargo_f = self.data['front_cargo_w']  # TODO: get real data (done)
+        XLEMAC = self.data['XLEMAC']
+        mac = self.data['mac']
 
-        xcg_cargo_aft = 0.4  # TODO: get real data
-        mass_cargo_aft = self.data['aft_cargo_w']  # TODO: get real data (done)
+        xcg_cargo_f = (6.625 - XLEMAC)/mac
+        mass_cargo_f = self.data['front_cargo_w']
+
+        xcg_cargo_aft = (19.875 - XLEMAC)/mac
+        mass_cargo_aft = self.data['aft_cargo_w']
 
         xcg_f, mass_f = self.get_new_xcg(xcg_old, mass_old, xcg_cargo_f, mass_cargo_f)
         xcg_aft, mass_aft = self.get_new_xcg(xcg_old, mass_old, xcg_cargo_aft, mass_cargo_aft)
