@@ -8,7 +8,7 @@ from helpers import load_data
 
 class Loading:
 
-    #def __init__(self, file_name='NewData.csv'):
+    # def __init__(self, file_name='NewData.csv'):
     def __init__(self, file_name='data.csv'):
         self.data = load_data(file_name)
 
@@ -17,38 +17,6 @@ class Loading:
         xcg_oew = CG.cg
         self.xcg = [xcg_oew]  # assumed to be 0.25c we can update this later in more detail if we find another way
         self.mass = [self.data['OEW']]
-
-    def get_pax_mass(self):
-        """Returns the passenger + cabin luggage masses """
-        ramp_mass = self.data['ramp_mass']
-        fuel_mass = self.data['fuel_max']
-        front_cargo_w = self.data['front_cargo_w']
-        aft_cargo_w = self.data['aft_cargo_w']
-        OEW = self.data['OEW']
-
-        pax_luggage_m = ramp_mass - fuel_mass - front_cargo_w - aft_cargo_w - OEW
-
-        return pax_luggage_m / 100
-
-    def w_wing(self):
-        #GD method
-        S=15.61*10.7639104
-        A=7.88
-        M_h=432*0.514444444/np.sqrt(1.4*287*(288.15-0.0065*8840))
-        tc=0.1298
-        W_TO=42184/0.45359237
-        lamb=0.356
-        n_ult=1.5
-        w_wing= 0.00428*(S**0.48)*A*(M_h)**0.43*(W_TO*n_ult)**0.84*lamb**0.14/ ((100*(tc))**0.76*np.cos(lamb)**1.54)
-
-        #correction due to two engines
-        w_wing=w_wing*0.95
-
-        #converting to kg rom lbs
-        w_wing= w_wing * 0.45359237
-        return w_wing
-
-
 
     def get_new_xcg(self, xcg_old, mass_old, xcg_item, mass_item):
         """Returns the new mass and c.g. after an item is added"""
@@ -68,7 +36,7 @@ class Loading:
         xcg_old = self.xcg[-1]
         mass_old = self.mass[-1]
 
-        xcg_cargo_f = 0.2  # TODO: get real data
+        xcg_cargo_f = -0.2  # TODO: get real data
         mass_cargo_f = self.data['front_cargo_w']  # TODO: get real data (done)
 
         xcg_cargo_aft = 0.4  # TODO: get real data
@@ -105,7 +73,7 @@ class Loading:
         x_cg_f = (np.linspace(x_seats_f, x_seats_aft, n_seats) - XLEMAC) / mac
         x_cg_aft = (np.linspace(x_seats_aft, x_seats_f, n_seats) - XLEMAC) / mac
 
-        mass_average_pax = self.get_pax_mass()
+        mass_average_pax = 92
         xcg_old = self.xcg[-1]
         mass_old = self.mass[-1]
 
@@ -205,11 +173,10 @@ class Loading:
         fig.suptitle("Loading diagram", fontsize=16)
         ax.set_xlabel(r'$X_{cg_{MAC}}$ [-]')
         ax.set_ylabel(f'Mass [kg]')
-        ax.set_xlim(min_xcg*0.8, max_xcg*1.1)
+        ax.set_xlim(min_xcg * 0.8, max_xcg * 1.1)
         plt.legend([l1, l2, l3, l4, l5], ['Cargo', 'Window seats', 'Aisle seats', 'Middle seats', 'Fuel'])
         plt.grid()
         plt.show()
-
 
     # def get_xcg_ac(self):
     #
@@ -222,7 +189,6 @@ class Loading:
 def main():
     loading = Loading()
     loading.plot()
-    loading.w_wing()
 
 
 if __name__ == "__main__":
