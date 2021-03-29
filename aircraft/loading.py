@@ -126,7 +126,7 @@ class Loading:
         print("Check",min_xcg, max_xcg)
         return min_xcg, max_xcg
 
-    def plot(self):
+    def get_cg_shift(self, plot=True):
         """Plot the loading diagram"""
 
         # Define styles
@@ -182,14 +182,15 @@ class Loading:
         print(f"{'MTOW':<25} {max_mass:<8} {'[kg]':<7}")
 
         # Add plot labels, title, legend
-        fig.suptitle("Loading diagram", fontsize=16)
-        ax.set_xlabel(r'$X_{cg_{MAC}}$ [-]')
-        ax.set_ylabel(f'Mass [kg]')
-        ax.set_xlim(min_xcg * 0.8, max_xcg * 1.1)
-        plt.legend([l1, l2, l3, l4, l5],
-                   ['(1) Cargo', '(2) Window seats', '(3) Aisle seats', '(4) Middle seats', '(5)Fuel'])
-        plt.grid()
-        plt.show()
+        if plot:
+            fig.suptitle("Loading diagram", fontsize=16)
+            ax.set_xlabel(r'$X_{cg_{MAC}}$ [-]')
+            ax.set_ylabel(f'Mass [kg]')
+            ax.set_xlim(min_xcg * 0.8, max_xcg * 1.1)
+            plt.legend([l1, l2, l3, l4, l5],
+                       ['(1) Cargo', '(2) Window seats', '(3) Aisle seats', '(4) Middle seats', '(5) Fuel'])
+            plt.grid()
+            plt.show()
 
     # def get_xcg_ac(self):
     #
@@ -202,9 +203,8 @@ class Loading:
 def main():
     # loading = Loading(file_name = 'data.csv')
     # loading.plot()
-    loading = Loading(file_name = 'NewData.csv', mac = 3.17, change = 0.6)
-    loading.plot()
-    loading.get_maxmincg()
+    loading = Loading()
+    loading.get_cg_shift()
 
 
 if __name__ == "__main__":
