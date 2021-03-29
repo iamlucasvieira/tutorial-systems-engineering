@@ -34,7 +34,7 @@ class CenterOfGravity:
 
         self.get_cr()
 
-        self.wet_area = self.Swet()
+        self.wet_area = self.get_areas()
         self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
 
         self.cgs = self.components_cg()
@@ -48,17 +48,56 @@ class CenterOfGravity:
         self.cr_h = 2 * self.data['S_h'] / ((self.data['taper_h'] + 1) * self.data['b_h'])
         self.cr_v = 2 * self.data['S_v'] / ((self.data['taper_v'] + 1) * self.data['b_half_v'] * 2)
 
-    def Swet(self):
-        dfus = 3.56
-        lfus = self.data['l_f']
-        Swnet = self.data['S'] * 2 - 26.21 / 9 * 1.4 * dfus
-        tc = self.data['t/c']
-        kf = 0.2  # done
+    @staticmethod
+    def wet_to_exposed(mass):
+        return mass / 2 * (1 + 0.2 * self.data['t/c'])
+
+    def get_areas(self):
+        """Returns the areas of each group to estimate their mass"""
+        areas = {}
+
+        # Wing exposed area
         cr = self.cr
-        bcw = 26.21
-        S_h = self.data['S_h']
-        S_v = self.data['S_v']
-        return np.pi / dfus * (lfus - 1.3 * dfus) + Swnet * (2 + 0.5 * tc) + kf * bcw * cr + 2 * (S_h + S_v)
+        t_c = self.data['t/c']
+        ct = cr * t_c
+        kq = 0.95
+
+        A = self.data['A']
+        S = self.data['S']
+        taper = self.data['taper']
+
+        volume_w = kq * t_c / (np.sqrt(1 + taper)) * S * np.sqrt(S / A)
+        area_w = (2 + 0.5 * t_c) * ((volume_w * np.sqrt(A * (1 + taper))) / (kq * t_c)) ** (2 / 3)
+        areas['wing'] = area_w
+
+        # Vertical tail area
+
+        # Horizontal tail area
+
+
+        # Fuselage area
+        l_fus = self.data['l_f']
+        d_fus = self.data['l_h']
+        area_f = np.pi * d_fus * (l_fus - 1.3 * d_fus)
+        areas['fuselage'] = area_f
+
+
+
+        # Power plant "area" (for power plant the mass estimation is based on engine mass)
+        areas['power_plant'] = self.data['ME']
+
+        # Systems "area" (For systems the MTOW is used for mass estimation)
+        areas['systems'] = self.data['MTOW']
+        # dfus = 3.56
+        # lfus = self.data['l_f']
+        # Swnet = self.data['S'] * 2 - 26.21 / 9 * 1.4 * dfus
+        # tc = self.data['t/c']
+        # kf = 0.2  # done
+        # cr = self.cr
+        # bcw = 26.21
+        # S_h = self.data['S_h']
+        # S_v = self.data['S_v']
+        # return np.pi / dfus * (lfus - 1.3 * dfus) + Swnet * (2 + 0.5 * tc) + kf * bcw * cr + 2 * (S_h + S_v)
 
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
