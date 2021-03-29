@@ -186,7 +186,7 @@ class CenterOfGravity:
             numerator += self.mass[group] * self.cgs[group]
             denominator += self.mass[group]
 
-        XLERC = self.data['XLERC']
+        XLERC = self.data['nose_distance_w']
         mac = self.data['mac']
         taper = self.data['taper']
         b = self.data['b']
