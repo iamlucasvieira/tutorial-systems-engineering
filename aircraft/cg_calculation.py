@@ -34,8 +34,7 @@ class CenterOfGravity:
 
         self.get_cr()
 
-        self.wet_area = self.Swet()
-        self.exposed_area = self.wet_area / 2 * (1 + 0.2 * self.data['t/c'])
+        self.areas = self.get_areas()
 
         self.cgs = self.components_cg()
         self.mass = self.components_mass()
@@ -48,30 +47,62 @@ class CenterOfGravity:
         self.cr_h = 2 * self.data['S_h'] / ((self.data['taper_h'] + 1) * self.data['b_h'])
         self.cr_v = 2 * self.data['S_v'] / ((self.data['taper_v'] + 1) * self.data['b_half_v'] * 2)
 
-    def Swet(self):
-        dfus = 3.56
-        lfus = self.data['l_f']
-        Swnet = self.data['S'] * 2 - 26.21 / 9 * 1.4 * dfus
-        tc = self.data['t/c']
-        kf = 0.2  # done
-        cr = self.cr
-        bcw = 26.21
-        Sh = self.data['S_h']
-        Sv = self.data['S_v']
-        return np.pi / dfus * (lfus - 1.3 * dfus) + Swnet * (2 + 0.5 * tc) + kf * bcw * cr + 2 * (Sh + Sv)
+    @staticmethod
+    def wet_to_exposed(mass):
+        return mass / 2 * (1 + 0.2 * self.data['t/c'])
+
+    def get_areas(self):
+        """Returns the areas of each group to estimate their mass"""
+        areas = {}
+
+        # Wing exposed area
+        S = self.data['S']
+        d_fus = self.data['l_h']
+        b = self.data['b']
+        chord_fuselage, _ = self.chord_at_pctg(d_fus / b, surface='w')
+
+        area_w = S - d_fus * chord_fuselage
+        areas['wing'] = area_w
+
+        # Vertical tail area
+        area_v = self.data['S_v']
+        areas['vertical_tail'] = area_v
+
+        # Horizontal tail area
+        area_h = self.data['S_h']
+        areas['horizontal_tail'] = area_h
+
+        # Fuselage area
+        l_fus = self.data['l_f']
+        d_fus = self.data['l_h']
+        area_f = np.pi * d_fus * l_fus
+        areas['fuselage'] = area_f
+
+        # Power plant "area" (for power plant the mass estimation is based on engine mass)
+        areas['power_plant'] = self.data['ME']
+
+        # Systems "area" (For systems the MTOW is used for mass estimation)
+        areas['systems'] = self.data['MTOW']
+
+        return areas
 
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
         factors = self.factors
+        areas = self.areas
         MTOW = self.data['MTOW']
         ME = self.data['ME']  # We got from wikipedia  ALF502R-3
+        area_w = areas['wing']
+        area_f = areas['fuselage']
+        area_v = areas['vertical_tail']
+        area_h = areas['horizontal_tail']
 
         mass = {}
 
-        mass['wing'] = factors['wing'] * self.exposed_area + factors['main_gear'] * MTOW + factors['power_plant'] * ME
-        mass['fuselage'] = factors['fuselage'] * self.wet_area + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
-        mass['horizontal_tail'] = factors['horizontal_tail'] * MTOW
-        mass['vertical_tail'] = factors['vertical_tail'] * MTOW
+        mass['wing'] = factors['wing'] * area_w + factors['main_gear'] * MTOW + factors['power_plant'] * ME
+        mass['fuselage'] = factors['fuselage'] * area_f + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
+        mass['horizontal_tail'] = factors['horizontal_tail'] * area_h
+        mass['vertical_tail'] = factors['vertical_tail'] * area_v
 
         return mass
 
@@ -88,7 +119,7 @@ class CenterOfGravity:
             quarter_sweep = self.data['quart_sweep_v']
             A = self.data['A_v']
             distance_to_root = self.data['nose_distance_v']
-        elif surface =='h':
+        elif surface == 'h':
             tr = self.data['taper_h']
             quarter_sweep = self.data['quart_sweep_h']
             A = self.data['A_h']
@@ -96,7 +127,7 @@ class CenterOfGravity:
         else:
             return None
 
-        sweep_le = np.arctan(np.tan(quarter_sweep) - 4 / A * (-0.25 * (1 - tr) / (1 + tr)))
+        sweep_le = np.arctan(np.tan(np.radians(quarter_sweep)) - 4 / A * (-0.25 * (1 - tr) / (1 + tr)))
 
         # The c.g. is given as the distance to the leading edge of the root + the distance of the leading edge of the root to the a/c nose
         cg_distance = x_loc + y * np.tan(sweep_le) + distance_to_root
@@ -121,7 +152,7 @@ class CenterOfGravity:
         elif surface == 'h':
             taper_ratio = self.data['taper_h']
             b = self.data['b_h']
-            cr = self.cr
+            cr = self.cr_h
         else:
             return None
 
@@ -135,12 +166,12 @@ class CenterOfGravity:
         # To compute the c.g. position: first the it is found as a distance in the chord. Then it is transformed into distance to nose
 
         chord_cg_w, dist_le_w = self.chord_at_pctg(0.4, surface='w')
-        cgs['wing'] = self.cg_distance_from_nose(chord_cg_w * 0.38 , dist_le_w, surface='w')
+        cgs['wing'] = self.cg_distance_from_nose(chord_cg_w * 0.38, dist_le_w, surface='w')
 
-        chord_cg_h, dist_le_h= self.chord_at_pctg(0.38, surface='h')
-        cgs['horizontal_tail'] = self.cg_distance_from_nose(chord_cg_h*0.42,dist_le_h, surface='h')
+        chord_cg_h, dist_le_h = self.chord_at_pctg(0.38, surface='h')
+        cgs['horizontal_tail'] = self.cg_distance_from_nose(chord_cg_h * 0.42, dist_le_h, surface='h')
 
-        chord_cg_v, dist_le_v= self.chord_at_pctg(0.38, surface='v')
+        chord_cg_v, dist_le_v = self.chord_at_pctg(0.38, surface='v')
         cgs['vertical_tail'] = self.cg_distance_from_nose(chord_cg_v * 0.43, dist_le_v, surface='v')
 
         cgs['fuselage'] = 0.42 * self.data['l_f']
@@ -155,13 +186,21 @@ class CenterOfGravity:
             numerator += self.mass[group] * self.cgs[group]
             denominator += self.mass[group]
 
-        return numerator / denominator
+        XLERC = self.data['XLERC']
+        mac = self.data['mac']
+        taper = self.data['taper']
+        b = self.data['b']
+        cr = self.cr
 
+        dist_rc_mac = (mac / cr - 1) / (-2 * (1 - taper)) * b
+
+        aircraft_cg = (numerator / denominator - (XLERC + dist_rc_mac)) / mac
+        return aircraft_cg
 
     def print(self):
-        print('-'*60)
+        print('-' * 60)
         print(f"{'c.g. calculation':^60}")
-        print('-'*60)
+        print('-' * 60)
 
         print(f"{'Aircraft c.g.':<30} {self.cg:<30}")
 
@@ -171,11 +210,10 @@ class CenterOfGravity:
         print(f"{'Fuselage c.g.':<30} {self.cgs['fuselage']:<30}")
 
 
-
-
 def main():
     cg_oew = CenterOfGravity()
     cg_oew.print()
+
 
 if __name__ == "__main__":
     main()
