@@ -3,9 +3,8 @@ import numpy as np
 from helpers import load_data
 
 class Stabcont:
-    def __init__(self):
-        #self.data=load_data("NewData.csv")
-        self.data=load_data("data.csv")
+    def __init__(self, file_name = "data.csv"):
+        self.data=load_data(file_name)
 
         T=288.15-0.3048*self.data['h_cruise']*6.5/1000
         a=np.sqrt(1.4*T*287)
@@ -211,7 +210,9 @@ class Stabcont:
 
 
 if __name__=="__main__":
-    ac=Stabcont()
+    ac=Stabcont(file_name = "data.csv")
+    ac.scissorplot()
+    ac=Stabcont(file_name = "NewData.csv")
     ac.scissorplot()
     print(ac.getx_ac('cruise'))
 
