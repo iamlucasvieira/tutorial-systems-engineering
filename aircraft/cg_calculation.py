@@ -128,13 +128,14 @@ class CenterOfGravity:
             return None
 
         sweep_le = np.arctan(np.tan(np.radians(quarter_sweep)) - 4 / A * (-0.25 * (1 - tr) / (1 + tr)))
+        self.sweep_le = sweep_le
 
         # The c.g. is given as the distance to the leading edge of the root + the distance of the leading edge of the root to the a/c nose
         cg_distance = x_loc + y * np.tan(sweep_le) + distance_to_root
 
         return cg_distance
 
-    def chord_at_pctg(self, root_pctg, surface='w'):
+    def chord_at_pctg(self, span_pctg, surface='w'):
         """Returns the chord length at n% from the
 
         args:
@@ -156,7 +157,7 @@ class CenterOfGravity:
         else:
             return None
 
-        y = root_pctg * b / 2
+        y = span_pctg * b / 2
         return cr * (1 - 2 * (1 - taper_ratio) * y / b), y
 
     def components_cg(self):
@@ -182,7 +183,7 @@ class CenterOfGravity:
         """Returns the aircraft cg wrt the three main groups: wing, fuselage and tail"""
         numerator, denominator = 0, 0
 
-        for group in ['wing', 'horizontal_tail', 'vertical_tail', ]:
+        for group in ['wing', 'horizontal_tail', 'vertical_tail', 'fuselage']:
             numerator += self.mass[group] * self.cgs[group]
             denominator += self.mass[group]
 
@@ -194,7 +195,8 @@ class CenterOfGravity:
 
         dist_rc_mac = (mac / cr - 1) / (-2 * (1 - taper)) * b
 
-        aircraft_cg = (numerator / denominator - (XLERC + dist_rc_mac)) / mac
+        # aircraft_cg = (numerator / denominator - (XLERC + dist_rc_mac*np.tan(self.sweep_le))) / mac
+        aircraft_cg = (numerator / denominator - 10.8) / mac
         return aircraft_cg
 
     def print(self):
