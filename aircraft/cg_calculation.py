@@ -194,7 +194,7 @@ class CenterOfGravity:
         return aircraft_cg
 
     def wrt_mac(self, value):
-        return (value-self.data['XLEMAC'])/self.data['mac']
+        return (value - self.data['XLEMAC']) / self.data['mac']
 
     def print(self):
         print('-' * 60)
