@@ -112,7 +112,7 @@ class Loading:
         xcg_old = self.xcg[-1]
         mass_old = self.mass[-1]
 
-        xcg_fuel = 0.8  # cg fuel is equal to cg fuel tank TODO: get real data
+        xcg_fuel = 0.8 # cg fuel is equal to cg fuel tank TODO: get real data
         mass_fuel = self.data['fuel_max']  # TODO: get real data (done)
 
         xcg_end, mass_end = self.get_new_xcg(xcg_old, mass_old, xcg_fuel, mass_fuel)
