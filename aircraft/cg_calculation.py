@@ -56,9 +56,9 @@ class CenterOfGravity:
         kf = 0.2  # done
         cr = self.cr
         bcw = 26.21
-        Sh = self.data['S_h']
-        Sv = self.data['S_v']
-        return np.pi / dfus * (lfus - 1.3 * dfus) + Swnet * (2 + 0.5 * tc) + kf * bcw * cr + 2 * (Sh + Sv)
+        S_h = self.data['S_h']
+        S_v = self.data['S_v']
+        return np.pi / dfus * (lfus - 1.3 * dfus) + Swnet * (2 + 0.5 * tc) + kf * bcw * cr + 2 * (S_h + S_v)
 
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
@@ -88,7 +88,7 @@ class CenterOfGravity:
             quarter_sweep = self.data['quart_sweep_v']
             A = self.data['A_v']
             distance_to_root = self.data['nose_distance_v']
-        elif surface =='h':
+        elif surface == 'h':
             tr = self.data['taper_h']
             quarter_sweep = self.data['quart_sweep_h']
             A = self.data['A_h']
@@ -96,7 +96,7 @@ class CenterOfGravity:
         else:
             return None
 
-        sweep_le = np.arctan(np.tan(quarter_sweep) - 4 / A * (-0.25 * (1 - tr) / (1 + tr)))
+        sweep_le = np.arctan(np.tan(np.radians(quarter_sweep)) - 4 / A * (-0.25 * (1 - tr) / (1 + tr)))
 
         # The c.g. is given as the distance to the leading edge of the root + the distance of the leading edge of the root to the a/c nose
         cg_distance = x_loc + y * np.tan(sweep_le) + distance_to_root
@@ -121,7 +121,7 @@ class CenterOfGravity:
         elif surface == 'h':
             taper_ratio = self.data['taper_h']
             b = self.data['b_h']
-            cr = self.cr
+            cr = self.cr_h
         else:
             return None
 
@@ -135,12 +135,12 @@ class CenterOfGravity:
         # To compute the c.g. position: first the it is found as a distance in the chord. Then it is transformed into distance to nose
 
         chord_cg_w, dist_le_w = self.chord_at_pctg(0.4, surface='w')
-        cgs['wing'] = self.cg_distance_from_nose(chord_cg_w * 0.38 , dist_le_w, surface='w')
+        cgs['wing'] = self.cg_distance_from_nose(chord_cg_w * 0.38, dist_le_w, surface='w')
 
-        chord_cg_h, dist_le_h= self.chord_at_pctg(0.38, surface='h')
-        cgs['horizontal_tail'] = self.cg_distance_from_nose(chord_cg_h*0.42,dist_le_h, surface='h')
+        chord_cg_h, dist_le_h = self.chord_at_pctg(0.38, surface='h')
+        cgs['horizontal_tail'] = self.cg_distance_from_nose(chord_cg_h * 0.42, dist_le_h, surface='h')
 
-        chord_cg_v, dist_le_v= self.chord_at_pctg(0.38, surface='v')
+        chord_cg_v, dist_le_v = self.chord_at_pctg(0.38, surface='v')
         cgs['vertical_tail'] = self.cg_distance_from_nose(chord_cg_v * 0.43, dist_le_v, surface='v')
 
         cgs['fuselage'] = 0.42 * self.data['l_f']
@@ -157,11 +157,10 @@ class CenterOfGravity:
 
         return numerator / denominator
 
-
     def print(self):
-        print('-'*60)
+        print('-' * 60)
         print(f"{'c.g. calculation':^60}")
-        print('-'*60)
+        print('-' * 60)
 
         print(f"{'Aircraft c.g.':<30} {self.cg:<30}")
 
@@ -171,11 +170,10 @@ class CenterOfGravity:
         print(f"{'Fuselage c.g.':<30} {self.cgs['fuselage']:<30}")
 
 
-
-
 def main():
     cg_oew = CenterOfGravity()
     cg_oew.print()
+
 
 if __name__ == "__main__":
     main()
