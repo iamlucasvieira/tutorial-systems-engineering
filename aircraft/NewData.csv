@@ -5,21 +5,21 @@ ramp_mass, 42410
 MTOW, 42184
 OEW,21677.4
 pax_cab_w, 7450
-front_cargo_w, 3326.45
-aft_cargo_w, 2108.15
+front_cargo_w, 2976.45
+aft_cargo_w, 1700.15
 
-#Still need to implement OEW cg change and engine diameter change
 
 ## Wing dimensions ##
 S, 77.3
 mac, 3.17
-XLEMAC, 10
+XLEMAC, 10.8
 b, 26.21
 A, 10.2235
 quart_sweep, 15
 taper, 0.356
 t/c,12.98
-nose_distance_w, 10.6
+l_fn, 10.38
+nose_distance_w, 9.8
 
 ## Horizontal wing dimensions ##
 b_h, 11.09
@@ -28,21 +28,21 @@ l_h, 12.35
 A_h, 7.88
 quart_sweep_h, 20
 taper_h, 0.410
-nose_distance_h, 21.2
+nose_distance_h, 23.8
 
 ## Fuselage dimensions ##
 b_f, 3.56
 h_f, 3.56
 l_f, 26.5
 
-l_fn, 5
+
 b_n, 1.4
 l_n, 2.6
 n_eng, 4
 v_max, 432
 v_app, 122
 h_cruise, 29000
-z_h, 4.7
+z_h, 4.85
 S_hld, 19.51
 CL_max, 3.43
 
@@ -53,7 +53,7 @@ b_half_v, 4.85
 A_v, 1.52
 taper_v, 0.67
 quart_sweep_v, 36
-nose_distance_v, 22
+nose_distance_v, 17.97
 
 
 ME, 2424
