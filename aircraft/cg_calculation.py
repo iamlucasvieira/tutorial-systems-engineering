@@ -47,6 +47,10 @@ class CenterOfGravity:
         self.cr_h = 2 * self.data['S_h'] / ((self.data['taper_h'] + 1) * self.data['b_h'])
         self.cr_v = 2 * self.data['S_v'] / ((self.data['taper_v'] + 1) * self.data['b_half_v'] * 2)
 
+    @staticmethod
+    def wet_to_exposed(mass):
+        return mass / 2 * (1 + 0.2 * self.data['t/c'])
+
     def get_areas(self):
         """Returns the areas of each group to estimate their mass"""
         areas = {}
@@ -56,6 +60,7 @@ class CenterOfGravity:
         d_fus = self.data['l_h']
         b = self.data['b']
         chord_fuselage, _ = self.chord_at_pctg(d_fus / b, surface='w')
+
         area_w = S - d_fus * chord_fuselage
         areas['wing'] = area_w
 
@@ -84,15 +89,16 @@ class CenterOfGravity:
     def components_mass(self):
         """Returns a dictionary with the mass of each a/c component"""
         factors = self.factors
+        areas=self.areas
         MTOW = self.data['MTOW']
         ME = self.data['ME']  # We got from wikipedia  ALF502R-3
 
         mass = {}
 
-        mass['wing'] = factors['wing'] * self.exposed_area + factors['main_gear'] * MTOW + factors['power_plant'] * ME
-        mass['fuselage'] = factors['fuselage'] * self.wet_area + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
-        mass['horizontal_tail'] = factors['horizontal_tail'] * MTOW
-        mass['vertical_tail'] = factors['vertical_tail'] * MTOW
+        mass['wing'] = factors['wing'] * areas['wing'] + factors['main_gear'] * MTOW + factors['power_plant'] * ME
+        mass['fuselage'] = factors['fuselage'] * areas['fuselage'] + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
+        mass['horizontal_tail'] = factors['horizontal_tail'] * areas['horizontal_tail']
+        mass['vertical_tail'] = factors['vertical_tail'] *  areas['vertical_tail']
 
         return mass
 
