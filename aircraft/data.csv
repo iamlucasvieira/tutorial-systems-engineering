@@ -18,7 +18,8 @@ A, 8.89
 quart_sweep, 15
 taper, 0.356
 t/c,12.98
-nose_distance_w, 10.6
+nose_distance_w,
+l_fn, 10.38
 
 ## Horizontal wing dimensions ##
 b_h, 11.09
@@ -34,14 +35,14 @@ b_f, 3.56
 h_f, 3.56
 l_f, 26.5
 
-l_fn, 5
+
 b_n, 1.4
 l_n, 2.6
 n_eng, 4
 v_max, 432
 v_app, 122
 h_cruise, 29000
-z_h, 4.7
+z_h, 4.85
 S_hld, 19.51
 CL_max, 3.43
 
