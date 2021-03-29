@@ -188,7 +188,9 @@ class Stabcont:
 
     def scissorplot(self):
         load = Loading(file_name = 'NewData.csv', mac = 3.17, change = 0.6)
+        load.get_cg_shift(plot=False)
         max_xcg, min_xcg = load.get_maxmincg()
+        
         print("Check Cg positions", min_xcg, max_xcg)
         
         S=self.data['S']
