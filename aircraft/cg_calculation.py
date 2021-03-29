@@ -78,7 +78,7 @@ class CenterOfGravity:
         # Fuselage area
         l_fus = self.data['l_f']
         d_fus = self.data['l_h']
-        area_f = np.pi * d_fus * (l_fus - 1.3 * d_fus)
+        area_f = np.pi * d_fus * l_fus
         areas['fuselage'] = area_f
 
 
