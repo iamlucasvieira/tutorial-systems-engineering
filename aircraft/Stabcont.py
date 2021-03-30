@@ -174,6 +174,7 @@ class Stabcont:
 
         cmac=cmac_w+cmacf+cmacfus
         return cmac
+    
     def contline(self,xcg):
         CL_max=self.data['CL_max']
         l_h=self.data['l_h']
@@ -186,8 +187,8 @@ class Stabcont:
 
         return sratio
 
-    def scissorplot(self):
-        load = Loading(file_name = 'NewData.csv', mac = 3.17, change = 0.6)
+    def scissorplot(self,file_name = 'NewData.csv'):
+        load = Loading(file_name = file_name, mac = 3.17, change = 0.6)
         load.get_cg_shift(plot=False)
         max_xcg, min_xcg = load.get_maxmincg()
         
@@ -220,10 +221,10 @@ class Stabcont:
 
 
 if __name__=="__main__":
-    # ac=Stabcont(file_name = "data.csv")
-    # ac.scissorplot()
-    ac=Stabcont(file_name = "NewData.csv")
-    ac.scissorplot()
+    ac=Stabcont(file_name = "data.csv")
+    ac.scissorplot(file_name = "data.csv")
+    # ac=Stabcont(file_name = "NewData.csv")
+    # ac.scissorplot(file_name = "NewData.csv")
     print(ac.getx_ac('cruise'))
 
 

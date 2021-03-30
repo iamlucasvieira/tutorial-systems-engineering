@@ -5,8 +5,8 @@ ramp_mass, 42410
 MTOW, 42184
 OEW,21677.4
 pax_cab_w, 7450
-front_cargo_w, 2976.45
-aft_cargo_w, 1700.15
+front_cargo_w, 3326.45
+aft_cargo_w, 2108.15
 
 
 ## Wing dimensions ##
