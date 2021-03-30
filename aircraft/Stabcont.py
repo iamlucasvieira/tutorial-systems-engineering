@@ -38,6 +38,7 @@ class Stabcont:
 
         if fc=='cruise':
             Claw=(2*np.pi*A)/(2+np.sqrt(4+(A*beta_cr/0.95)**2*(1+np.tan(np.deg2rad(L_half))**2/beta_cr**2)))
+            print('CLaw', Claw)
         if fc=='land':
             Claw = (2 * np.pi * A) / (2 + np.sqrt(
                 4 + (A * beta_l / 0.95) ** 2 * (1 + np.tan(np.deg2rad(L_half)) ** 2 / beta_l ** 2)))
@@ -54,6 +55,7 @@ class Stabcont:
 
         if fc=='cruise':
             Clah=(2*np.pi*A_h)/(2+np.sqrt(4+(A_h*beta_cr/0.95)**2*(1+np.tan(np.deg2rad(L_h_half))**2/beta_cr**2)))
+            print('Clah',Clah)
         if fc=='land':
             Clah = (2 * np.pi * A_h) / (2 + np.sqrt(
                 4 + (A_h * beta_l / 0.95) ** 2 * (1 + np.tan(np.deg2rad(L_h_half)) ** 2 / beta_l ** 2)))
@@ -69,6 +71,9 @@ class Stabcont:
         S_net=S - 2*(b_f/2*(c_r+c_fus)/2)
 
         CLaminh=CL_aw*(1+2.15*b_f/b)*S_net/S+np.pi/2*b_f**2/S
+        print('times',(1 + 2.15 * b_f / b) * S_net / S)
+        print('plus',np.pi / 2 * b_f ** 2 / S)
+        print('CL_a-h',CLaminh)
 
         return CLaminh
 
@@ -108,12 +113,15 @@ class Stabcont:
 
 
         xacf_1=1.8/CLaminh*b_f*h_f*l_fn/S/mac
+        print('xacf1=',xacf_1)
         xacf_2=0.273/(1+taper)*b_f*c_g*(b-b_f)/mac**2/(b+2.15*b_f)*np.tan(np.deg2rad(L_quart))
-
+        print('xacf2=', xacf_2)
         #x_ac nacelles
         xac_n=4*-4*b_n**2*l_n/(S*mac*CLaminh)
+        print('xac_n=', xac_n)
 
         x_ac=xac_w-xacf_1+xacf_2+xac_n
+        print('xac=', x_ac)
 
         return x_ac
     def getdownwash(self):
@@ -134,6 +142,7 @@ class Stabcont:
         term3=1-np.sqrt(mtv**2/(1+mtv**2))
 
         deda=KeL/Ke0*(term1+term2*term3)*CL_aw/np.pi/A
+        print('1-deda=', deda)
         return deda
     def stabline(self,xcg):
         CL_ah=self.getCLah('cruise')
@@ -218,17 +227,16 @@ class Stabcont:
         plt.show()
 
 
-
-
-
 if __name__=="__main__":
-    ac=Stabcont(file_name = "data.csv")
+    ac=Stabcont(file_name = "NewData.csv")
     ac.scissorplot()
     # ac=Stabcont(file_name = "NewData.csv")
     # ac.scissorplot(file_name = "NewData.csv")
     print(ac.getx_ac('cruise'))
-
-
+    print(ac.getCLaw('cruise'))
+    print(ac.getCLah('cruise'))
+    print(ac.getCLaminh('cruise'))
+    print(ac.getdownwash())
 
 
 
