@@ -7,7 +7,7 @@ from loading import Loading
 class Stabcont:
     def __init__(self, file_name = "data.csv"):
         self.data=load_data(file_name)
-
+        self.file_name = file_name
         T=288.15-0.3048*self.data['h_cruise']*6.5/1000
         a=np.sqrt(1.4*T*287)
         m=self.data['v_max']*0.514444/a
@@ -187,8 +187,8 @@ class Stabcont:
 
         return sratio
 
-    def scissorplot(self,file_name = 'NewData.csv'):
-        load = Loading(file_name = file_name, mac = 3.17, change = 0.6)
+    def scissorplot(self):
+        load = Loading(file_name = self.file_name, mac = 3.17, change = 0.6)
         load.get_cg_shift(plot=False)
         max_xcg, min_xcg = load.get_maxmincg()
         
@@ -204,13 +204,14 @@ class Stabcont:
         stabrange=self.stabline(xcgrange)
         contrange=self.contline(xcgrange)
 
-        plt.vlines(min_xcg,0,0.4)
-        plt.vlines(max_xcg,0,0.4)
+        plt.vlines(min_xcg,0,0.4,color='black')
+        plt.vlines(max_xcg,0,0.4,color='black')
+        #plt.hlines(0.202,0,0.4,color='red')
         plt.plot(xcgrange,stabrange[0])
         plt.plot(xcgrange,stabrange[1],label='S.M.')
         plt.plot(xcgrange, contrange)
-        plt.xlabel(r'$\frac{x_{cg}}{mac}$',fontsize=14)
-        plt.ylabel(r'$\frac{S_h}{S}$',fontsize=14)
+        plt.xlabel(r'$\frac{x_{cg}}{mac}$',fontsize=22)
+        plt.ylabel(r'$\frac{S_h}{S}$',fontsize=22)
         plt.ylim((0))
         plt.legend()
         plt.grid()
@@ -222,7 +223,7 @@ class Stabcont:
 
 if __name__=="__main__":
     ac=Stabcont(file_name = "data.csv")
-    ac.scissorplot(file_name = "data.csv")
+    ac.scissorplot()
     # ac=Stabcont(file_name = "NewData.csv")
     # ac.scissorplot(file_name = "NewData.csv")
     print(ac.getx_ac('cruise'))

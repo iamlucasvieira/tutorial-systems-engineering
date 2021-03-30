@@ -205,10 +205,8 @@ class Loading:
 
 
 def main():
-    # loading = Loading(file_name = 'data.csv')
-    # loading.plot()
-    loading = Loading()
-    loading.get_cg_shift()
+    loading = Loading(file_name = 'NewData.csv',mac=3.17,change=0.6)
+    loading.get_cg_shift(plot=True)
 
 
 if __name__ == "__main__":
