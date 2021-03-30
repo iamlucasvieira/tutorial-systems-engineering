@@ -103,7 +103,7 @@ class CenterOfGravity:
         mass['fuselage'] = factors['fuselage'] * area_f + factors['nose_gear'] * MTOW + factors['systems'] * MTOW
         mass['horizontal_tail'] = factors['horizontal_tail'] * area_h
         mass['vertical_tail'] = factors['vertical_tail'] * area_v
-
+        print(mass['wing'],mass['fuselage'],mass['horizontal_tail'],mass['vertical_tail'])
         return mass
 
     def cg_distance_from_nose(self, x_loc, y, surface='w'):
